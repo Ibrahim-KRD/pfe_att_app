@@ -105,9 +105,11 @@ class ScheduleRepository @Inject constructor() : IScheduleRepository {
             val group = groupList.random()
             val classroom = classroomList.random()
             val description = descriptionList.random() + " " + module.name
+            val startTime = "08:30"
+            val endTime = "10:30"
 
 
-            val sceance = Sceance(id, responsible, module, classType, group, classroom, description)
+            val sceance = Sceance(id, responsible, module, classType,startTime,endTime, group, classroom, description)
             sceances.add(sceance)
         }
         return sceances

@@ -81,7 +81,7 @@ fun SchedulePage(
                       Sceance(scheduleViewModel.sciences.size.toString(),
                           Teacher("John", "Doe", "123 Main St", "2022", "Mathematics", "Professor"),
                           Module("Mathematics", "This is a math course", "Advanced", "Mathematics"),
-                          "Lecture","A","inf 3","my new added sceance"
+                          "Lecture","08:00","12:32","A","inf 3","my new added sceance"
                       )
                   )
                 },
@@ -216,11 +216,9 @@ fun SeanceList(seances: List<Sceance>,navController: NavController) {
 }
 
 
-
 @Composable
 fun SceanceCard(sceance: Sceance,navController: NavController) {
     Card(
-        
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -236,26 +234,19 @@ fun SceanceCard(sceance: Sceance,navController: NavController) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = "Module: ${sceance.module.name}",
+                text = sceance.module.name,
                 style = MaterialTheme.typography.h6
             )
-            Text(
-                text = "Teacher: ${sceance.responsible.firstName} ${sceance.responsible.lastName}",
-                style = MaterialTheme.typography.body1
-            )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Group: ${sceance.group}",
                 style = MaterialTheme.typography.body1
             )
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Classroom: ${sceance.classroom}",
-                style = MaterialTheme.typography.body1
-            )
-            Text(
-                text = "Description: ${sceance.description}",
+                text = "Time: ${sceance.startTime} - ${sceance.endTime}",
                 style = MaterialTheme.typography.body1
             )
         }
     }
 }
-
