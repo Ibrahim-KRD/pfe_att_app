@@ -36,9 +36,9 @@ class ModulesViewModel @Inject constructor(private val moduleRepository: IModule
         val module2 = Module("Database", "SQL, NoSQL, and other database related topics", "License 2", "Informatics")
         val classroom1 = "C001"
         val classroom2 = "C002"
-        val sceance1 = Sceance("1", teacher1, module1, "TD", "G1", classroom1, "Introduction to algorithms")
-        val sceance2 = Sceance("2", teacher1, module1, "TP", "G2", classroom2, "Data structures and algorithms")
-        val sceance3 = Sceance("3", teacher2, module2, "Courses", "G3", classroom1, "Introduction to database systems")
+        val sceance1 = Sceance("1", teacher1, module1, "TD","08:00","12:30", "G1", classroom1, "Introduction to algorithms")
+        val sceance2 = Sceance("2", teacher1, module1, "TP", "08:00","12:30","G2", classroom2, "Data structures and algorithms")
+        val sceance3 = Sceance("3", teacher2, module2, "Courses", "G3","08:00","12:30", classroom1, "Introduction to database systems")
         return mutableListOf(sceance1, sceance2, sceance3)
     }
 
