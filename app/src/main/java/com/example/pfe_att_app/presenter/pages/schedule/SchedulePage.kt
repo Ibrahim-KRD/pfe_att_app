@@ -13,10 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 
@@ -25,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,6 +30,7 @@ import androidx.compose.ui.unit.sp
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.pfe_att_app.R
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Sceance
 import com.example.pfe_att_app.domain.entities.Teacher
@@ -111,7 +110,7 @@ fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleVie
 
     Column  {
         Column (
-            Modifier.background(lightRed)
+            Modifier.background(Color.White).shadow(1.dp).padding(0.dp,2.dp)
                 .padding(0.dp,  5.dp)
 
         ) {
@@ -216,8 +215,9 @@ fun SeanceList(seances: List<Sceance>,navController: NavController) {
 }
 
 
+
 @Composable
-fun SceanceCard(sceance: Sceance,navController: NavController) {
+fun SceanceCard(sceance: Sceance, navController: NavController) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
@@ -225,28 +225,59 @@ fun SceanceCard(sceance: Sceance,navController: NavController) {
             .fillMaxWidth()
             .clickable {
                 navController.navigate(Destination.ClassDetails.route)
-
             }
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = sceance.module.name,
-                style = MaterialTheme.typography.h6
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Group: ${sceance.group}",
-                style = MaterialTheme.typography.body1
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Time: ${sceance.startTime} - ${sceance.endTime}",
-                style = MaterialTheme.typography.body1
+            Column {
+                Text(
+                    text = "Module: ${sceance.module.name}",
+                    style = MaterialTheme.typography.h6
+                )
+                Text(
+                    text = "Speciality: ${sceance.module.speciality}",
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = "Level: ${sceance.module.level}",
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = "Group: ${sceance.group}",
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = "Classroom: ${sceance.classroom}",
+                    style = MaterialTheme.typography.body1
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            ClassTimeline(
+                startTime = sceance.startTime,
+                endTime = sceance.endTime,
+                20,
+
             )
         }
+    }
+}
+
+@Composable
+fun ClassTimeline(startTime: String, endTime: String, duration: Int) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            imageVector = Icons.Filled.DateRange,
+            contentDescription = "Start time"
+        )
+        Text(
+            text = " ${startTime} - ${endTime}",
+            style = MaterialTheme.typography.caption
+        )
     }
 }

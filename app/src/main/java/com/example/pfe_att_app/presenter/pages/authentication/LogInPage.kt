@@ -73,7 +73,11 @@ fun LoginPage(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(50.dp))
         Button(
-            onClick = { navController.navigate(Destination.Main.route) },
+            onClick = {
+                
+                navController.navigate(Destination.Main.route)
+
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),

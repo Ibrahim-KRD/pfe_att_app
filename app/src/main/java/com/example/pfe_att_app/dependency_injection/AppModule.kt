@@ -2,8 +2,10 @@ package com.example.pfe_att_app.dependency_injection
 
 import com.example.pfe_att_app.Repository
 import com.example.pfe_att_app.domain.IRepository
+import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
 import com.example.pfe_att_app.domain.repositories.IModuleRepository
 import com.example.pfe_att_app.domain.repositories.IScheduleRepository
+import com.example.pfe_att_app.infrastructure.repositories.AuthenticationRepository
 import com.example.pfe_att_app.infrastructure.repositories.ModuleRepository
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
 import dagger.Module
@@ -30,6 +32,11 @@ object AppModule {
         return ScheduleRepository()
     }
 
+    @Provides
+    @Singleton
+    fun provideAuthenticationRepository(): IAuthenticationRepository {
+        return AuthenticationRepository()
+    }
 
 
 }
