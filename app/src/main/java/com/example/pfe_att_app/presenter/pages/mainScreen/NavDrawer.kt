@@ -19,13 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
 import com.example.pfe_att_app.R
 import com.example.pfe_att_app.domain.entities.Teacher
 
 import com.example.pfe_att_app.presenter.navigation.Destination
-
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -34,7 +31,8 @@ fun AppDrawer(
 
     scaffoldState: ScaffoldState,
 
-) {
+
+    ) {
 
 
     var cs = rememberCoroutineScope()
@@ -117,7 +115,7 @@ fun DrawerBody(
         }
         // Logout button
         Button(
-            onClick = logout,
+            onClick = { },
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth()

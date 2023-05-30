@@ -8,6 +8,8 @@ import com.example.pfe_att_app.domain.repositories.IScheduleRepository
 import com.example.pfe_att_app.infrastructure.repositories.AuthenticationRepository
 import com.example.pfe_att_app.infrastructure.repositories.ModuleRepository
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,9 +36,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(): IAuthenticationRepository {
-        return AuthenticationRepository()
-    }
+    fun provideAuthenticationRepository(impl:AuthenticationRepository): IAuthenticationRepository = impl
 
-
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 }

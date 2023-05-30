@@ -23,12 +23,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.presenter.navigation.Destination
+import com.example.pfe_att_app.presenter.pages.authentication.AuthenticationViewModel
 import com.example.pfe_att_app.presenter.pages.mainScreen.AppDrawer
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ModulesPage(navController: NavController,modulesViewModel: ModulesViewModel = hiltViewModel()) {
+fun ModulesPage(
+    navController: NavController,
+    modulesViewModel: ModulesViewModel = hiltViewModel(),
+
+) {
 
 
 
@@ -106,7 +111,7 @@ fun ModulePageContent(modules: List<Module>,navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
 
-                .padding(20.dp,16.dp),
+                .padding(20.dp, 16.dp),
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -140,7 +145,7 @@ fun ModuleListRow(module: Module,navController: NavController) {
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .fillMaxWidth()
-            .clickable(onClick = {navController.navigate(Destination.ModuleDetailsPage.route) }),
+            .clickable(onClick = { navController.navigate(Destination.ModuleDetailsPage.route) }),
         elevation = 8.dp,
     ) {
         Column(
