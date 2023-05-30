@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "415831349629",
+    "project_id": "schoolattendanceapplication",
+    "storage_bucket": "schoolattendanceapplication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415831349629:android:8dd8e6aefb8a265164d414",
+        "android_client_info": {
+          "package_name": "com.example.pfe_att_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "415831349629-13g6hd6ogtmj3i7skeg39o07f89b23r7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcs3oadYW0cwH7YjVlz-mYxp4KeUh6TSs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "415831349629-13g6hd6ogtmj3i7skeg39o07f89b23r7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
