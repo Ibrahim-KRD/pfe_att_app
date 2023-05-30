@@ -36,8 +36,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(impl:AuthenticationRepository): IAuthenticationRepository = impl
-
+    fun provideAuthenticationRepository(): IAuthenticationRepository {
+        return AuthenticationRepository(FirebaseAuth.getInstance())
+    }
     @Provides
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
 }
