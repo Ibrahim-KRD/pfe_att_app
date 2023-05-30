@@ -18,26 +18,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.pfe_att_app.R
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Sceance
 import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
+import com.example.pfe_att_app.presenter.pages.authentication.AuthenticationViewModel
 import com.example.pfe_att_app.presenter.pages.mainScreen.AppDrawer
 import com.example.pfe_att_app.ui.theme.darkRed
-import com.example.pfe_att_app.ui.theme.lightRed
 import kotlinx.coroutines.launch
 import java.time.format.TextStyle
 import java.util.*
@@ -47,13 +42,22 @@ import java.util.*
 @Composable
 fun SchedulePage(
     navController: NavController,
-    scheduleViewModel: ScheduleViewModel = hiltViewModel()
+    scheduleViewModel: ScheduleViewModel = hiltViewModel(),
 ) {
 
 
     val coroutineScope = rememberCoroutineScope()
 
     val scaffoldState = rememberScaffoldState()
+
+
+
+
+
+
+
+
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -110,8 +114,11 @@ fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleVie
 
     Column  {
         Column (
-            Modifier.background(Color.White).shadow(1.dp).padding(0.dp,2.dp)
-                .padding(0.dp,  5.dp)
+            Modifier
+                .background(Color.White)
+                .shadow(1.dp)
+                .padding(0.dp, 2.dp)
+                .padding(0.dp, 5.dp)
 
         ) {
             DayNavigator(scheduleViewModel)
@@ -186,7 +193,8 @@ fun DayNavigator(scheduleViewModel: ScheduleViewModel) {
 @Composable
 fun DayNode(scheduleItem: DayItem) {
     Column(
-        modifier = Modifier.width(40.dp)
+        modifier = Modifier
+            .width(40.dp)
 
             .padding(5.dp)
 

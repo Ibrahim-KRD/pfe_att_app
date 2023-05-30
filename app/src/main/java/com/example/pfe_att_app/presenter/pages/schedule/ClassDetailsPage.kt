@@ -13,46 +13,55 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.MailOutline
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.pfe_att_app.R
-import com.example.pfe_att_app.domain.entities.Note
-import com.example.pfe_att_app.domain.entities.Sceance
 import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.navigation.Destination
+import com.example.pfe_att_app.presenter.pages.dialogs.QRCodeBottomSheetDialog
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ClassDetailsPage(navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()) {
 
+    val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val coroutineScope = rememberCoroutineScope()
 
-
-    SeanceDetailsPage(navController,scheduleViewModel)
+    ModalBottomSheetLayout(
+        sheetState = bottomSheetState,
+        sheetContent = {
+            QRCodeBottomSheetDialog(
+                classInfo = "Module: Math\nClassroom: A101\nTime: 9:00 AM - 10:30 AM"
+            ) { coroutineScope.launch {
+                bottomSheetState.hide()
+            } }
+        }
+    ) {
+        SeanceDetailsPage(navController, scheduleViewModel, bottomSheetState)
+    }
 
 
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun SeanceDetailsPage(navController: NavController,scheduleViewModel: ScheduleViewModel) {
+fun SeanceDetailsPage(
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel,
+    bsdialog: ModalBottomSheetState,
+
+    ) {
 var selectedSceanceIndex = 1 
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -87,52 +96,51 @@ var selectedSceanceIndex = 1
                     Text("Add Student")
                 }
             }
-        },
-        content = {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-            ) {
-                Card(
+        }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Card(
 
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
+                    Text(
+                        text = "Group: ${scheduleViewModel.sciences.get(selectedSceanceIndex).group}",
+                        style = MaterialTheme.typography.body1
+                    )
+                    Text(
+                        text = "Classroom: ${scheduleViewModel.sciences.get(selectedSceanceIndex).classroom}",
+                        style = MaterialTheme.typography.body1
+                    )
+                    Text(
+                        text = "Description: ${scheduleViewModel.sciences.get(selectedSceanceIndex).description}",
+                        style = MaterialTheme.typography.body1
+                    )
+                    Button(
+                        onClick = {coroutineScope.launch { bsdialog.show() }}, // Call the lambda function when the button is clicked
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(top = 8.dp)
                     ) {
-                        Text(
-                            text = "Group: ${scheduleViewModel.sciences.get(selectedSceanceIndex).group}",
-                            style = MaterialTheme.typography.body1
-                        )
-                        Text(
-                            text = "Classroom: ${scheduleViewModel.sciences.get(selectedSceanceIndex).classroom}",
-                            style = MaterialTheme.typography.body1
-                        )
-                        Text(
-                            text = "Description: ${scheduleViewModel.sciences.get(selectedSceanceIndex).description}",
-                            style = MaterialTheme.typography.body1
-                        )
-                        Button(
-                            onClick = { /* generate QR code for seance ID */ },
-                            modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(top = 8.dp)
-                        ) {
-                            Text("Generate QR Code")
-                        }
+                        Text("Generate QR Code")
                     }
                 }
-                Text(
-                    text = "Affected Students",
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                BottomSection(scheduleViewModel, navController )
             }
+            Text(
+                text = "Affected Students",
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            BottomSection(scheduleViewModel, navController)
         }
-    )
+    }
 }
 
 @Composable
