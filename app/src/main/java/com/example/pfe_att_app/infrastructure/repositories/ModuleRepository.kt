@@ -2,41 +2,34 @@ package com.example.pfe_att_app.infrastructure.repositories
 
 
 
+import androidx.lifecycle.LiveData
+import com.example.pfe_att_app.database.ContactDao
+import com.example.pfe_att_app.database.ModuleDao
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.repositories.IModuleRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ModuleRepository : IModuleRepository {
+class ModuleRepository @Inject constructor(private val moduleDao: ModuleDao): IModuleRepository {
 
-    var modules : MutableList<Module> = mutableListOf(
-        Module("Algorithm", "data structor and stuff like that", "License 1", "Informatic"),
-        Module("Database Systems", "database design and management", "License 2", "Informatic"),
-        Module("Web Development", "front-end and back-end web development", "License 1", "Informatic"),
-        Module("Artificial Intelligence", "machine learning and deep learning", "License 2", "Informatic"),
-        Module("Mobile Application Development", "Android and iOS app development", "License 1", "Informatic"),
-        Module("Network Security", "network design and security", "License 2", "Informatic"),
-        Module("Algorithm", "data structor and stuff like that", "License 1", "Informatic"),
-        Module("Database Systems", "database design and management", "License 2", "Informatic"),
-        Module("Web Development", "front-end and back-end web development", "License 1", "Informatic"),
-        Module("Artificial Intelligence", "machine learning and deep learning", "License 2", "Informatic"),
-        Module("Mobile Application Development", "Android and iOS app development", "License 1", "Informatic"),
-        Module("Network Security", "network design and security", "License 2", "Informatic")
-
-      )
-
-
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
 
     override fun AddModule(module: Module) {
-       modules.add(module)
+        coroutineScope.launch(Dispatchers.IO) {
+            moduleDao.Insert(module)
+        }
     }
 
     override fun DeleteModule(module: Module) {
-        modules.remove(module)
+
     }
 
-    override fun getAllModules(): List<Module> {
+    override fun getAllModules():LiveData< List<Module>> {
 
-        return modules
+        return moduleDao.getAllModule()
     }
 
 

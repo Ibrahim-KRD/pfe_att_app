@@ -1,5 +1,8 @@
 package com.example.pfe_att_app.domain.entities
 
+import androidx.room.Entity
+
+@Entity
 class Student(
     firstName: String,
     lastName: String,
@@ -7,15 +10,15 @@ class Student(
     adress: String,
 
     subscriptionYear: String,
-    matricule: String,
-    level: String,
-    group: Int,
-    speciality: String
+    var matricule: String,
+    var level: String,
+    var group: Int,
+    var speciality: String
 ) : Person(
-    firstName,
-    lastName,
+    firstName = firstName,
+    lastName = lastName,
 
-    adress,
+    adress = adress,
 
-    subscriptionYear
+    subscriptionYear = subscriptionYear
 )

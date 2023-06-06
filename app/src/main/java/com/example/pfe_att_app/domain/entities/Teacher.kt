@@ -1,6 +1,11 @@
 package com.example.pfe_att_app.domain.entities
+
+import androidx.room.Entity
+
 // todo :  change the speciality and the role to enum
+@Entity
 class Teacher(
+
     firstName: String,
     lastName: String,
     // TODO:    contact: Contact,
@@ -10,10 +15,7 @@ class Teacher(
   var  speciality : String,
    var role : String
 ) : Person(
-    firstName, lastName,
-    adress,
-    subscriptionYear
-) {
-
-
-}
+   firstName =  firstName, lastName =  lastName,
+   adress =  adress,
+   subscriptionYear =  subscriptionYear
+)

@@ -1,14 +1,15 @@
 package com.example.pfe_att_app.domain.use_cases.schedule
 
-import com.example.pfe_att_app.domain.entities.Sceance
+import androidx.lifecycle.LiveData
+import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.repositories.IScheduleRepository
 import java.time.LocalDate
-import java.util.Date
 
 
 class GetSchedulesUseCase(var scheduleRepository: IScheduleRepository) {
 
-     suspend fun execute(selectedDate: LocalDate):List<Sceance>{
+     suspend fun execute(selectedDate: LocalDate):LiveData<List<SceancewithResponsibleAndModule>>{
       return   scheduleRepository.getSchedule(selectedDate)
     }
 

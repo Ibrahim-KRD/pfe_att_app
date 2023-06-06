@@ -1,9 +1,12 @@
 package com.example.pfe_att_app.presenter.navigation
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.pfe_att_app.presenter.pages.attendence.AttendenceInformationPage
 import com.example.pfe_att_app.presenter.pages.modules.ModuleDetailsScreen
@@ -26,8 +29,17 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
 
         }
 
-        composable(route = Destination.ClassDetails.route) {
-            ClassDetailsPage(navController)
+        composable(route = Destination.ClassDetails.route + "/{seance_id}",
+            arguments = listOf(
+                navArgument("seance_id"){
+                    type = NavType.StringType
+                    defaultValue = "1"
+                    nullable=true
+                }
+            )
+
+        ) {entry ->
+            ClassDetailsPage( seance_id = entry.arguments?.getString("seance_id"),navController)
         }
         composable(route = Destination.AttendenceInformation.route) {
             AttendenceInformationPage(navController)

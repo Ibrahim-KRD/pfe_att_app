@@ -16,12 +16,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pfe_att_app.R
+import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
 
 @Composable
-fun RegisterPage(navController: NavController) {
+fun RegisterPage(navController: NavController,
+
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -40,7 +44,10 @@ fun RegisterScreen() {
 
 
 @Composable
-fun RegisterContent(navController: NavController) {
+fun RegisterContent(
+    navController: NavController,
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
+) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
@@ -60,9 +67,24 @@ fun RegisterContent(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
             SecurityInfoSection()
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterButton({ navController.navigate(Destination.Main.route) })
+            RegisterButton({
+                authenticationViewModel.register(
+                    Teacher(
+                        "John",
+                        "Doe",
+                        "123 Main St",
+                        "2022",
+                        "Mathematics",
+                        "Professor"
+                    )
+
+                )
+            })
             Spacer(modifier = Modifier.height(16.dp))
-            LogInButton(onLogIn = { navController.navigate(Destination.Login.route) })
+            LogInButton(onLogIn = {
+
+                navController.navigate(Destination.Login.route)
+            })
             Spacer(modifier = Modifier.height(32.dp))
         }
     }

@@ -15,14 +15,23 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
+import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.navigation.Destination
 import com.example.pfe_att_app.presenter.pages.dialogs.QRCodeBottomSheetDialog
@@ -31,10 +40,46 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ClassDetailsPage(navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()) {
+fun ClassDetailsPage(
+    seance_id :String?,
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel = hiltViewModel(),
+
+) {
 
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
+
+
+
+
+    val enrollmentsState = remember { mutableStateListOf<EnrollmentWithStudent>() }
+
+    val enrollments: LiveData<List<EnrollmentWithStudent>> = scheduleViewModel.getStudentOf(seance_id!!.toInt())
+
+    // Observe the LiveData and update the state object
+    val lifecycleOwner = LocalLifecycleOwner.current
+    enrollments.observe(lifecycleOwner) { enrollments ->
+        enrollmentsState.clear()
+        enrollmentsState.addAll(enrollments)
+    }
+
+
+
+
+
+    val seanceState = remember { mutableStateOf<Seance?>(null) }
+
+    val seance: LiveData<Seance> = scheduleViewModel.getSeanceById(seance_id.toInt())
+
+// Observe the LiveData and update the state object
+    val _lifecycleOwner = LocalLifecycleOwner.current
+    seance.observe(_lifecycleOwner) { fetched_seance ->
+        seanceState.value = fetched_seance
+    }
+
+
+
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
@@ -46,7 +91,7 @@ fun ClassDetailsPage(navController: NavController,scheduleViewModel: ScheduleVie
             } }
         }
     ) {
-        SeanceDetailsPage(navController, scheduleViewModel, bottomSheetState)
+        SeanceDetailsPage(navController, scheduleViewModel, bottomSheetState,enrollmentsState,seanceState)
     }
 
 
@@ -60,6 +105,8 @@ fun SeanceDetailsPage(
     navController: NavController,
     scheduleViewModel: ScheduleViewModel,
     bsdialog: ModalBottomSheetState,
+    enrollmentsState: SnapshotStateList<EnrollmentWithStudent>,
+    seanceState: MutableState<Seance?>,
 
     ) {
 var selectedSceanceIndex = 1 
@@ -69,7 +116,7 @@ var selectedSceanceIndex = 1
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = scheduleViewModel.sciences.get(selectedSceanceIndex).module.name) },
+                title = { Text(text = "module name") },
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White,
                 navigationIcon = {
@@ -112,15 +159,15 @@ var selectedSceanceIndex = 1
                     modifier = Modifier.padding(16.dp)
                 ) {
                     Text(
-                        text = "Group: ${scheduleViewModel.sciences.get(selectedSceanceIndex).group}",
+                        text = "Group: ${seanceState.value?.group}",
                         style = MaterialTheme.typography.body1
                     )
                     Text(
-                        text = "Classroom: ${scheduleViewModel.sciences.get(selectedSceanceIndex).classroom}",
+                        text = "Classroom: ${seanceState.value?.classroom}",
                         style = MaterialTheme.typography.body1
                     )
                     Text(
-                        text = "Description: ${scheduleViewModel.sciences.get(selectedSceanceIndex).description}",
+                        text = "Description: ${seanceState.value?.description}",
                         style = MaterialTheme.typography.body1
                     )
                     Button(
@@ -138,18 +185,24 @@ var selectedSceanceIndex = 1
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(top = 16.dp)
             )
-            BottomSection(scheduleViewModel, navController)
+            BottomSection(enrollmentsState,scheduleViewModel, navController)
         }
     }
 }
 
 @Composable
-fun BottomSection(scheduleViewModel: ScheduleViewModel,navController: NavController){
-    StudentList(scheduleViewModel.getStudentOf(),navController)
+fun BottomSection(
+    enrollmentsState: SnapshotStateList<EnrollmentWithStudent>,
+    scheduleViewModel: ScheduleViewModel,
+    navController: NavController
+){
+    StudentList(
+        enrollmentsState
+        ,navController)
 }
 
 @Composable
-fun StudentList(students: List<Student>,navController: NavController) {
+fun StudentList(students: SnapshotStateList<EnrollmentWithStudent>, navController: NavController) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -157,7 +210,7 @@ fun StudentList(students: List<Student>,navController: NavController) {
     ) {
         items(students) { student ->
 
-            StudentRow(student = student,PresenceState("present" , color = Color.Green),10.0f ,true, navController)
+            StudentRow( student.student,PresenceState("present" , color = Color.Green),10.0f ,false, navController)
         }
     }
 }

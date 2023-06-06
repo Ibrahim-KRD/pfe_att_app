@@ -1,4 +1,12 @@
 package com.example.pfe_att_app.domain.entities
 
-data class Contact(val phoneNumber: String,val email : String) {
-}
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class Contact(
+    @PrimaryKey(autoGenerate = true)
+    val id :Int =0,
+    var phoneNumber: String,
+    var email: String
+)

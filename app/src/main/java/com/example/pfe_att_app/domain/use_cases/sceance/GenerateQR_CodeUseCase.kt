@@ -4,7 +4,7 @@ import com.example.pfe_att_app.domain.repositories.ISceanceRepository
 
 class GenerateQR_CodeUseCase(var sceanceRepository: ISceanceRepository) {
     suspend fun execute(id: String): String {
-        return sceanceRepository.getSceance(id).id
+        return "67"
     }
 
 }

@@ -15,15 +15,16 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.presenter.navigation.Destination
-import com.example.pfe_att_app.presenter.pages.authentication.AuthenticationViewModel
 import com.example.pfe_att_app.presenter.pages.mainScreen.AppDrawer
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,19 @@ fun ModulesPage(
     val coroutineScope = rememberCoroutineScope()
 
     val scaffoldState = rememberScaffoldState()
+
+
+
+    val moduleState = remember { mutableStateListOf<Module>() }
+
+    val modules: LiveData<List<Module>> = modulesViewModel.getModules()
+
+    // Observe the LiveData and update the state object
+    val lifecycleOwner = LocalLifecycleOwner.current
+    modules.observe(lifecycleOwner) { contactsList ->
+        moduleState.clear()
+        moduleState.addAll(contactsList)
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -70,10 +84,10 @@ fun ModulesPage(
             FloatingActionButton(
                 onClick = {
                    modulesViewModel.AddModule(
-                       Module("Database",
-                           "data structor and stuff like that",
-                           "License 1",
-                           "Informatic")
+                       Module(name = "Database",
+                     description =       "data structor and stuff like that",
+                      level =      "License 1",
+                       speciality =     "Informatic")
                    )
                 },
                 modifier = Modifier.padding(16.dp)
@@ -86,7 +100,7 @@ fun ModulesPage(
     ) {
 
 
-        ModulePageContent(modulesViewModel.modules,navController)
+        ModulePageContent(moduleState,navController)
 
     }
 }

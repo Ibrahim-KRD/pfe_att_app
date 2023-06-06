@@ -1,6 +1,13 @@
 package com.example.pfe_att_app.dependency_injection
 
+import android.app.Application
 import com.example.pfe_att_app.Repository
+import com.example.pfe_att_app.database.AttendanceApplicationDatabase
+import com.example.pfe_att_app.database.ContactDao
+import com.example.pfe_att_app.database.EnrollementDao
+import com.example.pfe_att_app.database.ModuleDao
+import com.example.pfe_att_app.database.SeanceDao
+import com.example.pfe_att_app.database.TeacherDao
 import com.example.pfe_att_app.domain.IRepository
 import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
 import com.example.pfe_att_app.domain.repositories.IModuleRepository
@@ -24,24 +31,55 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun ProvideModuleRepository():IModuleRepository{
-        return ModuleRepository()
+    fun ProvideModuleRepository(moduleDao: ModuleDao):IModuleRepository{
+        return ModuleRepository(moduleDao)
     }
 
     @Provides
     @Singleton
-    fun provideScheduleRepository(): IScheduleRepository {
-        return ScheduleRepository()
+    fun provideScheduleRepository(seanceDao: SeanceDao,enrollementDao: EnrollementDao): IScheduleRepository {
+        return ScheduleRepository(seanceDao,enrollementDao)
+    }
+    @Provides
+    @Singleton
+    fun provideAttendanceApplicationDatabase(context: Application): AttendanceApplicationDatabase {
+        return AttendanceApplicationDatabase.getInstance(context)
+    }
+    @Provides
+    @Singleton
+    fun provideContactDao(database: AttendanceApplicationDatabase): ContactDao {
+        return database.contactDao()
     }
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(): IAuthenticationRepository {
-        return AuthenticationRepository(FirebaseAuth.getInstance())
+    fun provideModuleDao(database: AttendanceApplicationDatabase): ModuleDao {
+        return database.moduleDao()
     }
+
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
+    fun provideTeacherDao(database: AttendanceApplicationDatabase): TeacherDao {
+        return database.teacherDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideEnrollmentDao(database: AttendanceApplicationDatabase): EnrollementDao {
+        return database.enrollmentDao()
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideSeanceDao(database: AttendanceApplicationDatabase): SeanceDao {
+        return database.seanceDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationRepository(teacherDao: TeacherDao): IAuthenticationRepository {
+        return AuthenticationRepository(teacherDao)
+    }
+
 }

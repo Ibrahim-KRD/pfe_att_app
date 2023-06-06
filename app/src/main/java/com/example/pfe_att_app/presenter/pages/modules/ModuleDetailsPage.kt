@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pfe_att_app.domain.entities.Module
-import com.example.pfe_att_app.domain.entities.Sceance
+import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.presenter.navigation.Destination
 import com.example.pfe_att_app.ui.theme.lightRed
 
@@ -33,7 +33,11 @@ import com.example.pfe_att_app.ui.theme.lightRed
 fun ModuleDetailsScreen(navController: NavController,modulesViewModel: ModulesViewModel = hiltViewModel()) {
     val tabs = listOf("TP", "TD", "Courses", "Exams")
     var selectedTab by remember { mutableStateOf(0) }
-val module =     modulesViewModel.modules.get(1)
+val module =    Module(name = "Database",
+    description =       "data structor and stuff like that",
+    level =      "License 1",
+    speciality =     "Informatic")
+
     Scaffold(
 topBar = {
     TopAppBar(
@@ -50,7 +54,8 @@ topBar = {
             Column {
                 ModuleDetailsHeader(module)
 
-                ClassTabView(modulesViewModel.generateSceances(),
+                ClassTabView(
+                    emptyList(),
                 navigateTostudentAttendence = {navController.navigate(Destination.AttendenceInformation.route)})
 
             }
@@ -61,7 +66,7 @@ topBar = {
 }
 
 @Composable
-fun ClassList(sceances: List<Sceance>, navigateTostudentAttendence: () -> Unit) {
+fun ClassList(sceances: List<Seance>, navigateTostudentAttendence: () -> Unit) {
     LazyColumn {
         items(sceances) { sceance ->
             ClassRow(sceance, navigateTostudentAttendence)
@@ -71,7 +76,7 @@ fun ClassList(sceances: List<Sceance>, navigateTostudentAttendence: () -> Unit) 
 }
 
 @Composable
-fun ClassRow(sceance: Sceance, navigateTostudentAttendence: () -> Unit) {
+fun ClassRow(sceance: Seance, navigateTostudentAttendence: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +184,7 @@ fun ModuleDetailsHeader(module: Module) {
 
 
 @Composable
-fun ClassTabView(classList: List<Sceance>, navigateTostudentAttendence: () -> Unit) {
+fun ClassTabView(classList: List<Seance>, navigateTostudentAttendence: () -> Unit) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("TP", "TD", "Courses", "Exams")
 

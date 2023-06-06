@@ -1,9 +1,6 @@
 package com.example.pfe_att_app.presenter.pages.authentication
 
 
-
-
-
 import android.annotation.SuppressLint
 import android.media.Image
 import androidx.compose.foundation.Image
@@ -16,10 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.text.font.FontWeight
@@ -30,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LiveData
 
 import androidx.navigation.NavController
 
 import com.example.pfe_att_app.R
+import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
 
 
@@ -46,29 +48,23 @@ fun LoginPage(
     val scaffoldState = rememberScaffoldState()
 
 
+    val teacherState = remember { mutableStateOf<Teacher?>(null) }
 
-    val isAuthenticated by authenticationViewModel.isAuthenticated.collectAsState()
-    val showError by authenticationViewModel.showError.collectAsState()
+    val teacher: LiveData<Teacher> = authenticationViewModel.login("sfs", "fs")
 
-    LaunchedEffect(key1 = isAuthenticated, key2 = showError) {
-        if (isAuthenticated) {
-            navController.navigate(Destination.Main.route)
-        }
-
-        if (showError) {
-            scaffoldState.snackbarHostState.showSnackbar(
-                message = "Login failed",
-                duration = SnackbarDuration.Short
-            )
-        }
+// Observe the LiveData and update the state object
+    val lifecycleOwner = LocalLifecycleOwner.current
+    teacher.observe(lifecycleOwner) { fetchedTeacher ->
+        teacherState.value = fetchedTeacher
     }
+
 
 
 
     Scaffold(
         scaffoldState = scaffoldState,
 
-    ) {
+        ) {
 
         Column(
             modifier = Modifier
@@ -111,9 +107,9 @@ fun LoginPage(
             Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = {
-
-
-                    authenticationViewModel.login("email","password")
+                    authenticationViewModel.login("", "")
+                    if(teacherState.value != null)
+                    navController.navigate(Destination.Main.route)
 
                 },
                 modifier = Modifier
@@ -135,7 +131,8 @@ fun LoginPage(
                     modifier = Modifier.align(Alignment.CenterVertically)
                 )
                 TextButton(onClick = { navController.navigate(Destination.Register.route) }) {
-                    Text(text = "Register",
+                    Text(
+                        text = "Register",
                         style = MaterialTheme.typography.body2,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )

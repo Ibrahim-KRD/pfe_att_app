@@ -20,17 +20,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
-import com.example.pfe_att_app.domain.entities.Module
-import com.example.pfe_att_app.domain.entities.Sceance
-import com.example.pfe_att_app.domain.entities.Teacher
+import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.presenter.navigation.Destination
-import com.example.pfe_att_app.presenter.pages.authentication.AuthenticationViewModel
 import com.example.pfe_att_app.presenter.pages.mainScreen.AppDrawer
 import com.example.pfe_att_app.ui.theme.darkRed
 import kotlinx.coroutines.launch
@@ -53,7 +53,16 @@ fun SchedulePage(
 
 
 
+    val scheduleState = remember { mutableStateListOf<SceancewithResponsibleAndModule>() }
 
+    val seances: LiveData<List<SceancewithResponsibleAndModule>> = scheduleViewModel.getSchedule()
+
+    // Observe the LiveData and update the state object
+    val lifecycleOwner = LocalLifecycleOwner.current
+    seances.observe(lifecycleOwner) { contactsList ->
+        scheduleState.clear()
+        scheduleState.addAll(contactsList)
+    }
 
 
 
@@ -64,7 +73,7 @@ fun SchedulePage(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Schedule")
+                    Text(text = "Schedule ")
                 },
                 navigationIcon = {
                     IconButton(onClick = {
@@ -81,10 +90,11 @@ fun SchedulePage(
             FloatingActionButton(
                 onClick = {
                   scheduleViewModel.AddSceanceToSchedule(
-                      Sceance(scheduleViewModel.sciences.size.toString(),
-                          Teacher("John", "Doe", "123 Main St", "2022", "Mathematics", "Professor"),
-                          Module("Mathematics", "This is a math course", "Advanced", "Mathematics"),
-                          "Lecture","08:00","12:32","A","inf 3","my new added sceance"
+                      Seance(
+                          responsible_id = 1,
+                          module_id = 1,
+                         classType =  "Lecture", startTime = "08:00", endTime = "12:32", group = "A",
+                          classroom = "inf 3", description = "my new added sceance"
                       )
                   )
                 },
@@ -103,14 +113,16 @@ fun SchedulePage(
     ) {
 
 
-        ScheduleContent(navController, scheduleViewModel)
+        ScheduleContent(navController, scheduleViewModel,scheduleState)
+
+
     }
 
 }
 
 
 @Composable
-fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleViewModel) {
+fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleViewModel,seances : List<SceancewithResponsibleAndModule>) {
 
     Column  {
         Column (
@@ -128,7 +140,7 @@ fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleVie
 
 
         
-        SeanceList(scheduleViewModel.sciences,navController)
+        SeanceList(seances,navController,scheduleViewModel)
     }
 
 
@@ -214,10 +226,14 @@ data class DayItem(val dayOfWeek: String, val day: Int)
 
 
 @Composable
-fun SeanceList(seances: List<Sceance>,navController: NavController) {
+fun SeanceList(
+    seances: List<SceancewithResponsibleAndModule>,
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel
+) {
     LazyColumn {
         items(seances) { seance ->
-            SceanceCard(seance,navController)
+            SceanceCard(seance,navController,scheduleViewModel)
         }
     }
 }
@@ -225,14 +241,19 @@ fun SeanceList(seances: List<Sceance>,navController: NavController) {
 
 
 @Composable
-fun SceanceCard(sceance: Sceance, navController: NavController) {
+fun SceanceCard(
+    sceance: SceancewithResponsibleAndModule,
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel
+) {
     Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate(Destination.ClassDetails.route)
+
+                navController.navigate("${Destination.ClassDetails.route}/${sceance.sceance.id}")
             }
     ) {
         Row(
@@ -255,18 +276,18 @@ fun SceanceCard(sceance: Sceance, navController: NavController) {
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Group: ${sceance.group}",
+                    text = "Group: ${sceance.sceance.group}",
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Classroom: ${sceance.classroom}",
+                    text = "Classroom: ${sceance.sceance.classroom}",
                     style = MaterialTheme.typography.body1
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
             ClassTimeline(
-                startTime = sceance.startTime,
-                endTime = sceance.endTime,
+                startTime = sceance.sceance.startTime,
+                endTime = sceance.sceance.endTime,
                 20,
 
             )

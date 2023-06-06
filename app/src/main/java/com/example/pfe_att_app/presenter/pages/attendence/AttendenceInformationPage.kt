@@ -46,7 +46,10 @@ fun AttendenceInformationPage(navController: NavController,scheduleViewModel: Sc
 
 
    }) {
-       StudentDetailsScreen(scheduleViewModel.getStudentOf().get(1))
+       StudentDetailsScreen(
+           Student("Jane", "Doe", "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics"),
+
+           )
    }
 }
 

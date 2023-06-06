@@ -2,10 +2,14 @@ package com.example.pfe_att_app.presenter.pages.schedule
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.pfe_att_app.domain.entities.Sceance
+import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
+import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.domain.entities.Contact
+import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
-import com.example.pfe_att_app.domain.use_cases.schedule.AddSceanceToSchedule
 
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -64,14 +68,21 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
 //endregion
 
 
-    val sciences = scheduleRepository.getSchedule(LocalDate.now()).toMutableStateList()
-
-    fun AddSceanceToSchedule(sceance: Sceance) {
-        sciences.add(sceance)
+    fun AddSceanceToSchedule(sceance: Seance) {
+        scheduleRepository.AddToSchedule(sceance)
     }
 
-fun getStudentOf():MutableList<Student>{
- return   scheduleRepository.getStudentsOfSeance(sciences.get(1)).toMutableStateList()
-}
+    fun getSchedule(): LiveData<List<SceancewithResponsibleAndModule>> {
+
+        return scheduleRepository.getSchedule(LocalDate.now())
+    }
+
+    fun getStudentOf(seance_id: Int): LiveData<List<EnrollmentWithStudent>> {
+        return scheduleRepository.getStudentsOfSeance(seance_id)
+    }
+
+    fun getSeanceById(id: Int): LiveData<Seance> {
+        return scheduleRepository.getSeance(id)
+    }
 
 }
