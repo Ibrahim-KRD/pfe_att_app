@@ -33,28 +33,17 @@ import kotlinx.coroutines.launch
 fun ModulesPage(
     navController: NavController,
     modulesViewModel: ModulesViewModel = hiltViewModel(),
-
 ) {
-
-
-
     val coroutineScope = rememberCoroutineScope()
-
     val scaffoldState = rememberScaffoldState()
-
-
-
     val moduleState = remember { mutableStateListOf<Module>() }
-
     val modules: LiveData<List<Module>> = modulesViewModel.getModules()
-
     // Observe the LiveData and update the state object
     val lifecycleOwner = LocalLifecycleOwner.current
     modules.observe(lifecycleOwner) { contactsList ->
         moduleState.clear()
         moduleState.addAll(contactsList)
     }
-
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -74,7 +63,6 @@ fun ModulesPage(
                 }
             )
         },
-
         drawerContent = {
             // Drawer content
             AppDrawer(navController, scaffoldState)
@@ -104,7 +92,6 @@ fun ModulesPage(
 
     }
 }
-
 @Composable
 fun ModulePageContent(modules: List<Module>,navController: NavController) {
 
@@ -152,7 +139,6 @@ Text(text = "Modules")
 
 
 }
-
 @Composable
 fun ModuleListRow(module: Module,navController: NavController) {
     Card(

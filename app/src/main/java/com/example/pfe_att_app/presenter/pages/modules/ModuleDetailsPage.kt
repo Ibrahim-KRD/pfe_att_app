@@ -13,24 +13,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
 import com.example.pfe_att_app.domain.entities.Module
-import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.presenter.navigation.Destination
+import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 import com.example.pfe_att_app.ui.theme.lightRed
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ModuleDetailsScreen(navController: NavController,modulesViewModel: ModulesViewModel = hiltViewModel()) {
+fun ModuleDetailsScreen(navController: NavController,modulesViewModel: ModulesViewModel = hiltViewModel(),
+scheduleViewModel: ScheduleViewModel = hiltViewModel()
+                        ) {
+
+
+
+    val scheduleState = remember { mutableStateListOf<SceancewithResponsibleAndModule>() }
+
+    val seances: LiveData<List<SceancewithResponsibleAndModule>> = scheduleViewModel.getSchedule()
+
+    // Observe the LiveData and update the state object
+    val lifecycleOwner = LocalLifecycleOwner.current
+    seances.observe(lifecycleOwner) { contactsList ->
+        scheduleState.clear()
+        scheduleState.addAll(contactsList)
+    }
+
+
+
+
+
     val tabs = listOf("TP", "TD", "Courses", "Exams")
     var selectedTab by remember { mutableStateOf(0) }
 val module =    Module(name = "Database",
@@ -55,8 +80,8 @@ topBar = {
                 ModuleDetailsHeader(module)
 
                 ClassTabView(
-                    emptyList(),
-                navigateTostudentAttendence = {navController.navigate(Destination.AttendenceInformation.route)})
+                    scheduleState
+                ) { navController.navigate("${Destination.ClassDetails.route}/2") }
 
             }
 
@@ -66,7 +91,7 @@ topBar = {
 }
 
 @Composable
-fun ClassList(sceances: List<Seance>, navigateTostudentAttendence: () -> Unit) {
+fun ClassList(sceances: SnapshotStateList<SceancewithResponsibleAndModule>, navigateTostudentAttendence: () -> Unit) {
     LazyColumn {
         items(sceances) { sceance ->
             ClassRow(sceance, navigateTostudentAttendence)
@@ -76,7 +101,7 @@ fun ClassList(sceances: List<Seance>, navigateTostudentAttendence: () -> Unit) {
 }
 
 @Composable
-fun ClassRow(sceance: Seance, navigateTostudentAttendence: () -> Unit) {
+fun ClassRow(sceance: SceancewithResponsibleAndModule, navigateTostudentAttendence: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -112,7 +137,7 @@ fun ClassRow(sceance: Seance, navigateTostudentAttendence: () -> Unit) {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Group ${sceance.group}",
+                text = "Group ${sceance.sceance.group}",
                 fontSize = 12.sp,
                 color = Color.Gray
             )
@@ -121,7 +146,7 @@ fun ClassRow(sceance: Seance, navigateTostudentAttendence: () -> Unit) {
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = sceance.classroom,
+                text = sceance.sceance.classroom,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -184,7 +209,7 @@ fun ModuleDetailsHeader(module: Module) {
 
 
 @Composable
-fun ClassTabView(classList: List<Seance>, navigateTostudentAttendence: () -> Unit) {
+fun ClassTabView(classList: SnapshotStateList<SceancewithResponsibleAndModule>, navigateTostudentAttendence: () -> Unit) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("TP", "TD", "Courses", "Exams")
 

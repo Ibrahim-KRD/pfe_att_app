@@ -2,7 +2,6 @@ package com.example.pfe_att_app.domain.use_cases.schedule
 
 import androidx.lifecycle.LiveData
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
-import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.repositories.IScheduleRepository
 import java.time.LocalDate
 

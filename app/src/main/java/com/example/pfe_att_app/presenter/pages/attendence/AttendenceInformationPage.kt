@@ -3,21 +3,24 @@ package com.example.pfe_att_app.presenter.pages.attendence
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
+import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 import com.example.pfe_att_app.ui.theme.lightRed
@@ -25,36 +28,60 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AttendenceInformationPage(navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()){
+fun AttendenceInformationPage(
+    student_id: String?,
+    seance_id: String?,
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel = hiltViewModel()
+) {
     val coroutineScope = rememberCoroutineScope()
-   Scaffold(topBar = {
-
-       TopAppBar(
-
-           title = { Text("Atendence details") },
-           navigationIcon = {
-               IconButton(onClick = {
-                   coroutineScope.launch {
-                       navController.popBackStack()
-                   }
-               }) {
-                   Icon(Icons.Filled.ArrowBack, contentDescription = "back")
-               }
-           }
-       )
 
 
+    val dataState = remember { mutableStateOf<EnrollmentWithSeanceStudentModule?>(null) }
 
-   }) {
-       StudentDetailsScreen(
-           Student("Jane", "Doe", "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics"),
+    val data: LiveData<EnrollmentWithSeanceStudentModule?> =
+        scheduleViewModel.getEnrollmentWithStudentModuleSeance(
+            student_id!!.toInt(),
+            seance_id!!.toInt()
+        )
 
-           )
-   }
+// Observe the LiveData and update the state object
+    val _lifecycleOwner = LocalLifecycleOwner.current
+    data.observe(_lifecycleOwner) { fetched_seance ->
+        dataState.value = fetched_seance
+    }
+
+
+
+    Scaffold(topBar = {
+
+        TopAppBar(
+
+            title = { Text("Atendence details") },
+            navigationIcon = {
+                IconButton(onClick = {
+                    coroutineScope.launch {
+                        navController.popBackStack()
+                    }
+                }) {
+                    Icon(Icons.Filled.ArrowBack, contentDescription = "back")
+                }
+            }
+        )
+
+
+    }) {
+        StudentDetailsScreen(
+             Student(seance_id, student_id, "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics","","")
+                 //student = dataState.value!!.student
+        )
+    }
 }
 
 @Composable
 fun StudentDetailsScreen(student: Student) {
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +99,7 @@ fun StudentDetailsScreen(student: Student) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Algorithm",
+                    text = "module.name",
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -93,7 +120,7 @@ fun StudentDetailsScreen(student: Student) {
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "Student:",
+                            text = "Student: ${student.firstName} ${student.lastName} ",
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(

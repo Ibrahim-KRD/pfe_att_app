@@ -2,17 +2,14 @@ package com.example.pfe_att_app.infrastructure.repositories
 
 
 import androidx.lifecycle.LiveData
-import com.example.pfe_att_app.database.ContactDao
 import com.example.pfe_att_app.database.EnrollementDao
 import com.example.pfe_att_app.database.SeanceDao
+import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
-import com.example.pfe_att_app.database.relations.SeanceWithResponsible
-import com.example.pfe_att_app.domain.entities.Contact
-import com.example.pfe_att_app.domain.entities.Module
+import com.example.pfe_att_app.domain.entities.Enrollment
 import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
-import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.domain.repositories.IScheduleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,9 +25,14 @@ class ScheduleRepository @Inject constructor(
 
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+
     override  fun AddToSchedule(sceance: Seance) {
         coroutineScope.launch(Dispatchers.IO) {
             seanceDao.Insert(sceance)
+            var enrollment = Enrollment(student_id = 2, seance_id = 1, presenceState = true, mark = 10)
+            enrollementDao.Insert(enrollment)
+
         }
     }
 
@@ -52,7 +54,11 @@ class ScheduleRepository @Inject constructor(
        return seanceDao.getSeanceById(id)
     }
 
-//    Student("Bob", "Smith", "789 Oak Ave", "2022", "111111", "Master", 1, "Chemistry"),
+
+
+   override  fun getEnrolmmentWithModule_seance_student(student_id :Int , seance_id: Int):LiveData<EnrollmentWithSeanceStudentModule?>{
+         return enrollementDao.getEnrollmentWithSeanceStudent(student_id,seance_id)
+    }
 
 
 }

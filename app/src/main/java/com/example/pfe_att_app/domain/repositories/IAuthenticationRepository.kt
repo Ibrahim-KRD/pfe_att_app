@@ -1,15 +1,25 @@
 package com.example.pfe_att_app.domain.repositories
 
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
-import com.example.pfe_att_app.data.Resource
 import com.example.pfe_att_app.domain.entities.Person
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
-import com.google.firebase.auth.FirebaseUser
 
 interface IAuthenticationRepository {
 
- fun LogIn(email:String,password:String):LiveData<Teacher>
- fun Register(teacher: Teacher)
+ //region teacher
+
+ fun TeacherLogIn(email:String, password:String): Teacher?
+ fun TeacherRegister(teacher: Teacher)
+
+ //endregion
+
+
+ //region student
+ suspend fun StudentLogIn(email:String, password:String): Student?
+ fun StudentRegister(student: Student)
+ //endregion
 
 fun LogOut()
 }

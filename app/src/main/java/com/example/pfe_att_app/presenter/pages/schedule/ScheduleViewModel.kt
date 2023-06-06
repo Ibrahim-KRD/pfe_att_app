@@ -1,15 +1,12 @@
 package com.example.pfe_att_app.presenter.pages.schedule
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
-import com.example.pfe_att_app.domain.entities.Contact
 import com.example.pfe_att_app.domain.entities.Seance
-import com.example.pfe_att_app.domain.entities.Student
 
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,6 +80,10 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
 
     fun getSeanceById(id: Int): LiveData<Seance> {
         return scheduleRepository.getSeance(id)
+    }
+
+    fun getEnrollmentWithStudentModuleSeance(student_id:Int , seance_id:Int):LiveData<EnrollmentWithSeanceStudentModule?>{
+        return scheduleRepository.getEnrolmmentWithModule_seance_student(student_id,seance_id)
     }
 
 }

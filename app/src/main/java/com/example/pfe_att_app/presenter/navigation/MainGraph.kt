@@ -1,5 +1,6 @@
 package com.example.pfe_att_app.presenter.navigation
 
+import CreateSessionPage
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavArgument
 import androidx.navigation.NavController
@@ -41,8 +42,23 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
         ) {entry ->
             ClassDetailsPage( seance_id = entry.arguments?.getString("seance_id"),navController)
         }
-        composable(route = Destination.AttendenceInformation.route) {
-            AttendenceInformationPage(navController)
+
+        composable(route = Destination.AttendenceInformation.route + "/{student_id}/{seance_id}",
+            arguments = listOf(
+            navArgument("student_id"){
+                type = NavType.StringType
+                defaultValue = "1"
+                nullable=true
+            },
+                navArgument("seance_id"){
+                    type = NavType.StringType
+                    defaultValue = "1"
+                    nullable = true
+                }
+        ))
+        {entry ->
+            AttendenceInformationPage(student_id = entry.arguments?.getString("student_id"), seance_id = entry.arguments?.getString("seance_id"),
+                navController)
         }
 
 
@@ -54,6 +70,11 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
         composable(route = Destination.ModuleDetailsPage.route) {
             ModuleDetailsScreen(navController)
         }
+
+        composable(route = Destination.AddNewSessionPage.route){
+            CreateSessionPage(navController)
+        }
+
     }
 
 }

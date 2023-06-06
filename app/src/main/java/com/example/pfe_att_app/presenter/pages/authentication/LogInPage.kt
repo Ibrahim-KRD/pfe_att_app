@@ -2,41 +2,33 @@ package com.example.pfe_att_app.presenter.pages.authentication
 
 
 import android.annotation.SuppressLint
-import android.media.Image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 
-import androidx.compose.ui.text.font.FontWeight
-
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
 
 import androidx.navigation.NavController
 
 import com.example.pfe_att_app.R
+import com.example.pfe_att_app.domain.entities.Person
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -46,26 +38,11 @@ fun LoginPage(
     authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
-
-
-    val teacherState = remember { mutableStateOf<Teacher?>(null) }
-
-    val teacher: LiveData<Teacher> = authenticationViewModel.login("sfs", "fs")
-
-// Observe the LiveData and update the state object
-    val lifecycleOwner = LocalLifecycleOwner.current
-    teacher.observe(lifecycleOwner) { fetchedTeacher ->
-        teacherState.value = fetchedTeacher
-    }
-
-
-
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
-        scaffoldState = scaffoldState,
-
-        ) {
-
+        scaffoldState = scaffoldState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,9 +84,36 @@ fun LoginPage(
             Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = {
-                    authenticationViewModel.login("", "")
-                    if(teacherState.value != null)
-                    navController.navigate(Destination.Main.route)
+
+                    coroutineScope.launch {
+                        var user = authenticationViewModel.login("email", "password")
+
+                        if (user != null){
+
+                            when(user){
+                                is Teacher -> {
+                                    navController.navigate(Destination.Main.route)
+
+                                }
+                                is Student -> {
+
+                                    //todo head to student navigation
+
+                                }
+                            }
+
+                        }
+
+                        else {
+
+                            scaffoldState.snackbarHostState.showSnackbar(
+                                message = "user not found , or wrong information",
+                                actionLabel = "OK"
+                            )
+                        }
+
+                    }
+
 
                 },
                 modifier = Modifier
@@ -141,6 +145,4 @@ fun LoginPage(
             Spacer(modifier = Modifier.weight(1f))
         }
     }
-
-
 }

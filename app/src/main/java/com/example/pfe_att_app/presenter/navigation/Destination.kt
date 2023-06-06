@@ -11,6 +11,7 @@ sealed class Destination(val route: String) {
     object ClassDetails : Destination("classDetails")
     object AttendenceInformation : Destination("attendenceInformation")
     object ModuleDetailsPage : Destination("moduleDetails")
+    object AddNewSessionPage : Destination("newSessoin")
 
     object Root : Destination("root")
     object Authentication : Destination("authentication")

@@ -1,22 +1,19 @@
 package com.example.pfe_att_app.dependency_injection
 
 import android.app.Application
-import com.example.pfe_att_app.Repository
 import com.example.pfe_att_app.database.AttendanceApplicationDatabase
 import com.example.pfe_att_app.database.ContactDao
 import com.example.pfe_att_app.database.EnrollementDao
 import com.example.pfe_att_app.database.ModuleDao
 import com.example.pfe_att_app.database.SeanceDao
+import com.example.pfe_att_app.database.StudentDao
 import com.example.pfe_att_app.database.TeacherDao
-import com.example.pfe_att_app.domain.IRepository
 import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
 import com.example.pfe_att_app.domain.repositories.IModuleRepository
 import com.example.pfe_att_app.domain.repositories.IScheduleRepository
 import com.example.pfe_att_app.infrastructure.repositories.AuthenticationRepository
 import com.example.pfe_att_app.infrastructure.repositories.ModuleRepository
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +23,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
 
 
     @Provides
@@ -63,6 +59,13 @@ object AppModule {
         return database.teacherDao()
     }
 
+
+    @Provides
+    @Singleton
+    fun provideStudentDao(database: AttendanceApplicationDatabase): StudentDao {
+        return database.studentDao()
+    }
+
     @Provides
     @Singleton
     fun provideEnrollmentDao(database: AttendanceApplicationDatabase): EnrollementDao {
@@ -78,8 +81,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(teacherDao: TeacherDao): IAuthenticationRepository {
-        return AuthenticationRepository(teacherDao)
+    fun provideAuthenticationRepository(teacherDao: TeacherDao,studentDao: StudentDao): IAuthenticationRepository {
+        return AuthenticationRepository(teacherDao,studentDao)
     }
 
 }

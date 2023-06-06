@@ -48,16 +48,12 @@ fun QRCodeBottomSheetDialog(classInfo: String, onClose: () -> Unit) {
     }
 }
 
-
-
 private fun generateQRCodeBitmap(content: String, width: Int, height: Int): android.graphics.Bitmap? {
     try {
         val hints = EnumMap<EncodeHintType, Any>(EncodeHintType::class.java)
         hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
-
         val qrCodeWriter = QRCodeWriter()
         val bitMatrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height, hints)
-
         val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.RGB_565)
         for (x in 0 until width) {
             for (y in 0 until height) {

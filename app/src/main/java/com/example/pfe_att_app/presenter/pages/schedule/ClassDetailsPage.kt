@@ -224,7 +224,7 @@ fun StudentRow(student: Student, presenceState: PresenceState, mark: Float, hasA
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable(onClick = {
-                navController.navigate(Destination.AttendenceInformation.route)
+                navController.navigate("${Destination.AttendenceInformation.route}/2/1")
             })
 
     ) {
