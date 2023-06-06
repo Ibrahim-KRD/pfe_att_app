@@ -39,7 +39,7 @@ fun AppDrawer(
 
 
     DrawerBody(
-        Teacher("John", "Doe", "123 Main St", "2022", "Mathematics", "Professor"),
+        Teacher("John", "Doe", "123 Main St", "2022", "Mathematics", "Professor","",""),
         navController.currentDestination,
         { navController.navigate(Destination.Schedule.route) },
         { navController.navigate(Destination.Schedule.route) },

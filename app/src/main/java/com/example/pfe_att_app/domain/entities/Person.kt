@@ -8,10 +8,10 @@ open class Person(
     var id: Int = 0,
     var firstName: String,
     var lastName: String,
-    // TODO:     contact: Contact,
     var adress: String,
-    // TODO:   account: Account,
-    var subscriptionYear: String
-) {
+    var subscriptionYear: String,
 
-}
+    // account information
+    var email :String,
+    var password : String
+)

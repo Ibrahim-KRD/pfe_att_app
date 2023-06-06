@@ -39,10 +39,19 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
             )
 
         ) {entry ->
-            ClassDetailsPage( seance_id = entry.arguments?.getString("seance_id"),navController)
+            ClassDetailsPage( seance_id = entry.arguments?.getString("enrollement_id"),navController)
         }
-        composable(route = Destination.AttendenceInformation.route) {
-            AttendenceInformationPage(navController)
+        composable(route = Destination.AttendenceInformation.route,
+            arguments = listOf(
+            navArgument("enrollement_id"){
+                type = NavType.StringType
+                defaultValue = "1"
+                nullable=true
+            }
+        ))
+        {entry ->
+            AttendenceInformationPage(enrollement_id = entry.arguments?.getString("enrollement_id"),
+                navController)
         }
 
 

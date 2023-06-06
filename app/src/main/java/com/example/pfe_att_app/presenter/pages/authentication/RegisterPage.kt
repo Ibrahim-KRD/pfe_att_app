@@ -7,6 +7,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,33 +22,46 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.pfe_att_app.R
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
 
 @Composable
-fun RegisterPage(navController: NavController,
+fun RegisterPage(navController: NavController) {
 
-) {
+    var firstName by remember { mutableStateOf("") }
+    var lastName by remember { mutableStateOf("") }
+
+
+    var selectedTab by remember { mutableStateOf(0) }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-
+        modifier = Modifier.fillMaxSize()
     ) {
-        RegisterContent(navController)
+        RegisterContent(navController, selectedTab)
+        TabRow(
+            selectedTabIndex = selectedTab,
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            Tab(
+                selected = selectedTab == 0,
+                onClick = { selectedTab = 0 },
+                icon = { Icon(Icons.Default.Person, contentDescription = "Student") },
+                text = { Text("Student") }
+            )
+            Tab(
+                selected = selectedTab == 1,
+                onClick = { selectedTab = 1 },
+                icon = { Icon(Icons.Default.Build, contentDescription = "Teacher") },
+                text = { Text("Teacher") }
+            )
+        }
     }
-
 }
-
-
-
-@Composable
-fun RegisterScreen() {
- }
-
 
 @Composable
 fun RegisterContent(
     navController: NavController,
+    selectedTab: Int,
     authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     Surface(
@@ -58,31 +74,48 @@ fun RegisterContent(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(55.dp))
+            RegisterHeader(selectedTab)
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterHeader()
-            Spacer(modifier = Modifier.height(32.dp))
-            PersonalInfoSection()
-            Spacer(modifier = Modifier.height(32.dp))
-            CareerInfoSection()
+            if (selectedTab == 0) {
+                StudentInfoSection()
+            } else {
+                TeacherInfoSection()
+            }
             Spacer(modifier = Modifier.height(32.dp))
             SecurityInfoSection()
             Spacer(modifier = Modifier.height(32.dp))
-            RegisterButton({
-                authenticationViewModel.register(
-                    Teacher(
-                        "John",
-                        "Doe",
-                        "123 Main St",
-                        "2022",
-                        "Mathematics",
-                        "Professor"
+            RegisterButton(selectedTab) {
+                if (selectedTab == 0) {
+                    authenticationViewModel.StudentRegister(
+                        Student(
+                            firstName = "John",
+                            lastName = "Doe",
+                            adress = "123 Main St",
+                            subscriptionYear = "2022",
+                            matricule = "123456",
+                            level = "High School",
+                            group = 2,
+                            speciality = "Computer Science",
+                            email = "mail",
+                            password = "password"
+                        )
                     )
-
-                )
-            })
+                } else {
+                    authenticationViewModel.TeacherRegister(
+                        Teacher(
+                            "Jane",
+                            "Smith",
+                            "456 Elm St",
+                            "2022",
+                            "Mathematics",
+                            "Professor","mail","password"
+                        )
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             LogInButton(onLogIn = {
-
                 navController.navigate(Destination.Login.route)
             })
             Spacer(modifier = Modifier.height(32.dp))
@@ -91,18 +124,18 @@ fun RegisterContent(
 }
 
 @Composable
-fun RegisterHeader() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        
-    ) {
+fun RegisterHeader(selectedTab: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
             painter = painterResource(id = R.drawable.app_logo_big),
             contentDescription = "App Logo",
             modifier = Modifier.size(80.dp)
         )
         Text(
-            text = "Register",
+            text = when (selectedTab) {
+                0 -> "Student Register"
+                else -> "Teacher Register"
+            },
             style = MaterialTheme.typography.h4,
             modifier = Modifier.padding(16.dp)
         )
@@ -110,12 +143,10 @@ fun RegisterHeader() {
 }
 
 @Composable
-fun PersonalInfoSection() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+fun StudentInfoSection() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Personal Information",
+            text = "Student Information",
             style = MaterialTheme.typography.h5,
             modifier = Modifier.align(Alignment.Start)
         )
@@ -154,30 +185,106 @@ fun PersonalInfoSection() {
             label = { Text("Address") },
             modifier = Modifier.fillMaxWidth()
         )
-    }
-}
-
-
-@Composable
-fun CareerInfoSection(
-
-) {
-    Column(  horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "CAREER INFORMATION", style = MaterialTheme.typography.h6)
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "matricule",
-            onValueChange = {  },
-            label = { Text("Matricule") },
-            singleLine = true,
+            value = "",
+            onValueChange = {},
+            label = { Text("Subscription Year") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "specialty",
-            onValueChange = {  },
+            value = "",
+            onValueChange = {},
+            label = { Text("Matricule") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Level") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Group") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
             label = { Text("Specialty") },
-            singleLine = true,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun TeacherInfoSection() {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "Teacher Information",
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.align(Alignment.Start)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("First Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Last Name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Email") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Phone Number") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Address") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Subscription Year") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Speciality") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Role") },
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -185,9 +292,7 @@ fun CareerInfoSection(
 
 @Composable
 fun SecurityInfoSection() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Security Information",
             fontSize = 20.sp,
@@ -200,9 +305,7 @@ fun SecurityInfoSection() {
             onValueChange = {},
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -211,19 +314,16 @@ fun SecurityInfoSection() {
             onValueChange = {},
             label = { Text("Confirm Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
-            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
-
 @Composable
-fun RegisterButton(onRegister: () -> Unit) {
+fun RegisterButton(selectedTab: Int, onRegister: () -> Unit) {
     Button(
-        onClick =  onRegister ,
+        onClick = onRegister,
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp)
@@ -234,7 +334,10 @@ fun RegisterButton(onRegister: () -> Unit) {
         )
     ) {
         Text(
-            text = "Register",
+            text = when (selectedTab) {
+                0 -> "Register as Student"
+                else -> "Register as Teacher"
+            },
             color = MaterialTheme.colors.onPrimary,
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp
@@ -244,15 +347,13 @@ fun RegisterButton(onRegister: () -> Unit) {
 
 @Composable
 fun LogInButton(onLogIn: () -> Unit) {
-    Row (verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(top = 24.dp)){
-        Text(text = "you have an account ? ")
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 24.dp)) {
+        Text(text = "Already have an account? ")
         TextButton(
-            onClick =  onLogIn ,
-
+            onClick = onLogIn,
         ) {
             Text(
-                text = "LogIn",
+                text = "Log In",
                 color = MaterialTheme.colors.primary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp

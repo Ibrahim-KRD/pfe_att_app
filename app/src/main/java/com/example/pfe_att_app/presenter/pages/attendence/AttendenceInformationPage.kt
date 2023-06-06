@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AttendenceInformationPage(navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()){
+fun AttendenceInformationPage(enrollement_id:String?,navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()){
     val coroutineScope = rememberCoroutineScope()
    Scaffold(topBar = {
 
@@ -47,7 +47,7 @@ fun AttendenceInformationPage(navController: NavController,scheduleViewModel: Sc
 
    }) {
        StudentDetailsScreen(
-           Student("Jane", "Doe", "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics"),
+           Student("Jane", "Doe", "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics","",""),
 
            )
    }
