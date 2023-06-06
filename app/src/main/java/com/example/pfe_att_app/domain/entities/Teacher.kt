@@ -8,14 +8,16 @@ class Teacher(
 
     firstName: String,
     lastName: String,
-    // TODO:    contact: Contact,
     adress: String,
-    // TODO:   account: Account,
     subscriptionYear: String,
-  var  speciality : String,
-   var role : String
+    var speciality: String,
+    var role: String,
+    email: String,
+    password: String
 ) : Person(
-   firstName =  firstName, lastName =  lastName,
-   adress =  adress,
-   subscriptionYear =  subscriptionYear
+    firstName = firstName, lastName = lastName,
+    adress = adress,
+    subscriptionYear = subscriptionYear,
+    password = password,
+    email = email
 )

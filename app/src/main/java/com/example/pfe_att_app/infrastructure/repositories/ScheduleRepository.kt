@@ -9,6 +9,7 @@ import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
 import com.example.pfe_att_app.database.relations.SeanceWithResponsible
 import com.example.pfe_att_app.domain.entities.Contact
+import com.example.pfe_att_app.domain.entities.Enrollment
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
@@ -28,9 +29,14 @@ class ScheduleRepository @Inject constructor(
 
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
+
     override  fun AddToSchedule(sceance: Seance) {
         coroutineScope.launch(Dispatchers.IO) {
             seanceDao.Insert(sceance)
+            var enrollment = Enrollment(student_id = 1, seance_id = 2, presenceState = true, mark = 10)
+            enrollementDao.Insert(enrollment)
+
         }
     }
 
@@ -52,7 +58,6 @@ class ScheduleRepository @Inject constructor(
        return seanceDao.getSeanceById(id)
     }
 
-//    Student("Bob", "Smith", "789 Oak Ave", "2022", "111111", "Master", 1, "Chemistry"),
 
 
 }

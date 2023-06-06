@@ -13,12 +13,16 @@ class Student(
     var matricule: String,
     var level: String,
     var group: Int,
-    var speciality: String
+    var speciality: String,
+    email:String,
+    password : String
 ) : Person(
     firstName = firstName,
     lastName = lastName,
 
     adress = adress,
 
-    subscriptionYear = subscriptionYear
+    subscriptionYear = subscriptionYear,
+    password = password,
+    email = email
 )

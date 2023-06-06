@@ -3,6 +3,7 @@ package com.example.pfe_att_app.presenter.pages.authentication
 
 import android.annotation.SuppressLint
 import android.media.Image
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 
 import androidx.compose.ui.Alignment
 
@@ -35,8 +37,12 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 
 import com.example.pfe_att_app.R
+import com.example.pfe_att_app.domain.entities.Person
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -46,26 +52,12 @@ fun LoginPage(
     authenticationViewModel: AuthenticationViewModel = hiltViewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
-
-
-    val teacherState = remember { mutableStateOf<Teacher?>(null) }
-
-    val teacher: LiveData<Teacher> = authenticationViewModel.login("sfs", "fs")
-
-// Observe the LiveData and update the state object
-    val lifecycleOwner = LocalLifecycleOwner.current
-    teacher.observe(lifecycleOwner) { fetchedTeacher ->
-        teacherState.value = fetchedTeacher
-    }
-
-
-
+    val coroutineScope = rememberCoroutineScope()
+    val showDialog = remember { mutableStateOf(false) }
 
     Scaffold(
-        scaffoldState = scaffoldState,
-
-        ) {
-
+        scaffoldState = scaffoldState
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -107,10 +99,21 @@ fun LoginPage(
             Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = {
-                    authenticationViewModel.login("", "")
-                    if(teacherState.value != null)
-                    navController.navigate(Destination.Main.route)
-
+                    authenticationViewModel.login("mail", "password").observeForever { user ->
+                        when (user) {
+                            is Teacher -> navController.navigate(Destination.Main.route)
+                            is Student -> navController.navigate(Destination.Main.route)
+                            else -> {
+                                coroutineScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(
+                                        message = "Invalid login credentials",
+                                        actionLabel = "OK"
+                                    )
+                                }
+                            }
+                        }
+                        Log.d("LoginPage", "User: $user")
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,6 +144,17 @@ fun LoginPage(
             Spacer(modifier = Modifier.weight(1f))
         }
     }
-
-
+}
+@Composable
+fun showDialog(scaffoldState: ScaffoldState) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = { Text("Login Failed") },
+        text = { Text("Invalid login credentials") },
+        confirmButton = {
+            TextButton(onClick = { scaffoldState.snackbarHostState.currentSnackbarData?.dismiss() }) {
+                Text("OK")
+            }
+        }
+    )
 }

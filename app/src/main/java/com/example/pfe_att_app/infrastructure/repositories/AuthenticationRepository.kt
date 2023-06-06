@@ -1,46 +1,45 @@
 package com.example.pfe_att_app.infrastructure.repositories
 
-import android.app.Application
 import androidx.lifecycle.LiveData
-import com.example.pfe_att_app.data.Resource
-import com.example.pfe_att_app.data.await
+import com.example.pfe_att_app.database.StudentDao
 import com.example.pfe_att_app.database.TeacherDao
-import com.example.pfe_att_app.domain.entities.Person
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
-import com.google.firebase.FirebaseApp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AuthenticationRepository @Inject constructor(
-   private val teacherDao: TeacherDao
+    private val teacherDao: TeacherDao,
+    private val studentDao: StudentDao
 ) : IAuthenticationRepository {
 
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
 
+    override fun TeacherLogIn(email: String, password: String): LiveData<Teacher> {
 
-    override  fun LogIn(email: String, password: String): LiveData<Teacher> {
-        coroutineScope.launch(Dispatchers.IO) {
-            teacherDao.getTeacher()
-        }
-
-       return teacherDao.getTeacher()
+        return teacherDao.getTeacherWithCredential(email,password)
     }
 
-    override  fun Register(teacher: Teacher){
+    override fun TeacherRegister(teacher: Teacher) {
         coroutineScope.launch(Dispatchers.IO) {
             teacherDao.Insert(teacher)
         }
     }
 
+    override fun StudentLogIn(email: String, password: String): LiveData<Student> {
+       return studentDao.getStudentWithCredential(email, password)
+    }
 
+    override fun StudentRegister(student: Student) {
+        coroutineScope.launch(Dispatchers.IO) {
+            studentDao.Insert(student)
+        }
+    }
 
 
     override fun LogOut() {

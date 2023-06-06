@@ -1,36 +1,35 @@
 package com.example.pfe_att_app.presenter.pages.authentication
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pfe_att_app.domain.entities.Person
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.domain.entities.Teacher
-import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
 import com.example.pfe_att_app.infrastructure.repositories.AuthenticationRepository
 
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.toSet
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(val authenticationRepository: AuthenticationRepository) :
     ViewModel() {
 
+    fun login(email: String, password: String): LiveData<out Person?> {
+        val teacher = authenticationRepository.TeacherLogIn(email, password)
+        if (teacher != null) {
+            return teacher
+        }
 
-
-    fun login(email: String, password: String):LiveData<Teacher> {
-
-         return   authenticationRepository.LogIn(email, password)
-
+        val student = authenticationRepository.StudentLogIn(email, password)
+        if (student != null) {
+            return student
+        }
+        return MutableLiveData(null)
     }
+
 
 
     fun logout() {
@@ -38,15 +37,22 @@ class AuthenticationViewModel @Inject constructor(val authenticationRepository: 
     }
 
 
-    fun register(teacher: Teacher) {
+    fun StudentRegister(student: Student) {
         // Simulating register process
         viewModelScope.launch {
-            authenticationRepository.Register(
+            authenticationRepository.StudentRegister(
+                student
+            )
+        }
+    }
 
+
+    fun TeacherRegister(teacher: Teacher) {
+        // Simulating register process
+        viewModelScope.launch {
+            authenticationRepository.TeacherRegister(
                 teacher
-
-
-                )
+            )
         }
     }
 

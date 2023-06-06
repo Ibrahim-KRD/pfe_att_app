@@ -7,6 +7,7 @@ import com.example.pfe_att_app.database.ContactDao
 import com.example.pfe_att_app.database.EnrollementDao
 import com.example.pfe_att_app.database.ModuleDao
 import com.example.pfe_att_app.database.SeanceDao
+import com.example.pfe_att_app.database.StudentDao
 import com.example.pfe_att_app.database.TeacherDao
 import com.example.pfe_att_app.domain.IRepository
 import com.example.pfe_att_app.domain.repositories.IAuthenticationRepository
@@ -26,7 +27,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
 
 
     @Provides
@@ -63,6 +63,13 @@ object AppModule {
         return database.teacherDao()
     }
 
+
+    @Provides
+    @Singleton
+    fun provideStudentDao(database: AttendanceApplicationDatabase): StudentDao {
+        return database.studentDao()
+    }
+
     @Provides
     @Singleton
     fun provideEnrollmentDao(database: AttendanceApplicationDatabase): EnrollementDao {
@@ -78,8 +85,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(teacherDao: TeacherDao): IAuthenticationRepository {
-        return AuthenticationRepository(teacherDao)
+    fun provideAuthenticationRepository(teacherDao: TeacherDao,studentDao: StudentDao): IAuthenticationRepository {
+        return AuthenticationRepository(teacherDao,studentDao)
     }
 
 }

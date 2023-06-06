@@ -51,8 +51,6 @@ fun SchedulePage(
     val scaffoldState = rememberScaffoldState()
 
 
-
-
     val scheduleState = remember { mutableStateListOf<SceancewithResponsibleAndModule>() }
 
     val seances: LiveData<List<SceancewithResponsibleAndModule>> = scheduleViewModel.getSchedule()
@@ -68,52 +66,48 @@ fun SchedulePage(
 
 
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Schedule ")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "Menu")
-                    }
+    Scaffold(scaffoldState = scaffoldState, topBar = {
+        TopAppBar(title = {
+            Text(text = "Schedule ")
+        }, navigationIcon = {
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    scaffoldState.drawerState.open()
                 }
-            )
-        },
-        floatingActionButton  = {
-            FloatingActionButton(
-                onClick = {
-                  scheduleViewModel.AddSceanceToSchedule(
-                      Seance(
-                          responsible_id = 1,
-                          module_id = 1,
-                         classType =  "Lecture", startTime = "08:00", endTime = "12:32", group = "A",
-                          classroom = "inf 3", description = "my new added sceance"
-                      )
-                  )
-                },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add")
-
+            }) {
+                Icon(Icons.Filled.Menu, contentDescription = "Menu")
             }
+        })
+    }, floatingActionButton = {
+        FloatingActionButton(
+            onClick = {
+                scheduleViewModel.AddSceanceToSchedule(
+                    Seance(
+                        responsible_id = 1,
+                        module_id = 1,
+                        classType = "Lecture",
+                        startTime = "08:00",
+                        endTime = "12:32",
+                        group = "A",
+                        classroom = "inf 3",
+                        description = "my new added sceance"
+                    )
+                )
+            }, modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(Icons.Filled.Add, contentDescription = "Add")
 
-        },
-        drawerContent = {
-            // Drawer content
-            AppDrawer(navController, scaffoldState)
         }
+
+    }, drawerContent = {
+        // Drawer content
+        AppDrawer(navController, scaffoldState)
+    }
 
     ) {
 
 
-        ScheduleContent(navController, scheduleViewModel,scheduleState)
+        ScheduleContent(navController, scheduleViewModel, scheduleState)
 
 
     }
@@ -122,10 +116,14 @@ fun SchedulePage(
 
 
 @Composable
-fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleViewModel,seances : List<SceancewithResponsibleAndModule>) {
+fun ScheduleContent(
+    navController: NavController,
+    scheduleViewModel: ScheduleViewModel,
+    seances: List<SceancewithResponsibleAndModule>
+) {
 
-    Column  {
-        Column (
+    Column {
+        Column(
             Modifier
                 .background(Color.White)
                 .shadow(1.dp)
@@ -139,12 +137,9 @@ fun ScheduleContent(navController: NavController, scheduleViewModel: ScheduleVie
         }
 
 
-        
-        SeanceList(seances,navController,scheduleViewModel)
+
+        SeanceList(seances, navController, scheduleViewModel)
     }
-
-
-
 
 
 }
@@ -208,10 +203,7 @@ fun DayNode(scheduleItem: DayItem) {
         modifier = Modifier
             .width(40.dp)
 
-            .padding(5.dp)
-
-           ,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(5.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = scheduleItem.day.toString(),
@@ -233,11 +225,10 @@ fun SeanceList(
 ) {
     LazyColumn {
         items(seances) { seance ->
-            SceanceCard(seance,navController,scheduleViewModel)
+            SceanceCard(seance, navController, scheduleViewModel)
         }
     }
 }
-
 
 
 @Composable
@@ -246,16 +237,14 @@ fun SceanceCard(
     navController: NavController,
     scheduleViewModel: ScheduleViewModel
 ) {
-    Card(
-        shape = RoundedCornerShape(8.dp),
+    Card(shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
 
                 navController.navigate("${Destination.ClassDetails.route}/${sceance.sceance.id}")
-            }
-    ) {
+            }) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
@@ -264,20 +253,17 @@ fun SceanceCard(
         ) {
             Column {
                 Text(
-                    text = "Module: ${sceance.module.name}",
-                    style = MaterialTheme.typography.h6
+                    text = "Module: ${sceance.module.name}", style = MaterialTheme.typography.h6
                 )
                 Text(
                     text = "Speciality: ${sceance.module.speciality}",
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Level: ${sceance.module.level}",
-                    style = MaterialTheme.typography.body1
+                    text = "Level: ${sceance.module.level}", style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Group: ${sceance.sceance.group}",
-                    style = MaterialTheme.typography.body1
+                    text = "Group: ${sceance.sceance.group}", style = MaterialTheme.typography.body1
                 )
                 Text(
                     text = "Classroom: ${sceance.sceance.classroom}",
@@ -290,7 +276,7 @@ fun SceanceCard(
                 endTime = sceance.sceance.endTime,
                 20,
 
-            )
+                )
         }
     }
 }
@@ -301,12 +287,10 @@ fun ClassTimeline(startTime: String, endTime: String, duration: Int) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Filled.DateRange,
-            contentDescription = "Start time"
+            imageVector = Icons.Filled.DateRange, contentDescription = "Start time"
         )
         Text(
-            text = " ${startTime} - ${endTime}",
-            style = MaterialTheme.typography.caption
+            text = " ${startTime} - ${endTime}", style = MaterialTheme.typography.caption
         )
     }
 }
