@@ -20,4 +20,7 @@ interface StudentDao {
     @Query("SELECT * FROM student where email = :email and password = :password")
     fun getStudentWithCredential(email: String, password: String): Student?
 
+
+    @Query("SELECT * FROM student")
+    fun getStudent():List<Student?>
 }

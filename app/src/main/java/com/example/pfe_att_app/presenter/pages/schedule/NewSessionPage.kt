@@ -25,7 +25,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -49,13 +48,12 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Seance
-import com.example.pfe_att_app.presenter.navigation.Destination
+import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.pages.modules.ModulesViewModel
 import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.Year
 import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -65,9 +63,6 @@ fun CreateSessionPage(
     modulesViewModel: ModulesViewModel = hiltViewModel(),
     scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
-
-
-
     val moduleState = remember { mutableStateListOf<Module>() }
 
     val modules: LiveData<List<Module>> = modulesViewModel.getModules()
@@ -94,6 +89,15 @@ fun CreateSessionPage(
 
     val selectedClassroom = remember { mutableStateOf("") }
 
+    // Retrieve user id information from SharedPreferences
+
+    val context = LocalContext.current
+    val sharedPreferences =
+        remember { context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE) }
+
+    val userId = sharedPreferences.getInt("USER_ID", 0)
+
+
 
 
     Scaffold(
@@ -111,7 +115,7 @@ fun CreateSessionPage(
         Column(modifier = Modifier.padding(16.dp)) {
             PageTitle(title = "Create New Session")
             PageDescription(description = "Fill in the details below to create a new session.")
-            ModuleInformationSection(moduleList = moduleState,selectedModule)
+            ModuleInformationSection(moduleList = moduleState, selectedModule)
             TimingSection(
                 selectedDay = selectedDay,
                 selectedStartTime = selectedStartTime,
@@ -126,21 +130,25 @@ fun CreateSessionPage(
                 selectedClassroom = selectedClassroom
             )
             SaveButton(onSaveClicked = {
+
+                val students = scheduleViewModel.getStudents()
+
                 scheduleViewModel.AddSceanceToSchedule(
-                Seance(
-                    module_id = 1,  // Replace with the actual module ID
-                classType = "exams",
-                startTime = "10:00 AM",
-                endTime = "12:00 PM",
-                group = "License 3",
-                classroom = "salle info 3",
-                description = "Dummy session description",
-                    responsible_id = 1
+                    Seance(
+                        module_id = selectedModule.value!!.id,
+                        classType = selectedClassType.value,
+                        startTime = selectedStartTime.value.toString(),
+                        endTime = selectedEndTime.value.toString(),
+                        group = selectedLevel.value,
+                        classroom = selectedClassroom.value,
+                        description = "Dummy session description",
+                        responsible_id = userId!!,
+                        level = selectedLevel.value
+
+                    ),students
 
                 )
-
-            )
-            navController.popBackStack()
+                navController.popBackStack()
             })
 
             //  sections will go here
@@ -231,6 +239,7 @@ fun SectionTitle(title: String) {
         modifier = Modifier.padding(bottom = 8.dp)
     )
 }
+
 @Composable
 fun TimingSection(
     selectedDay: MutableState<DayOfWeek?>,
@@ -350,6 +359,7 @@ fun TimePicker(
         )
     }
 }
+
 @Composable
 fun SeanceInformationSection(
     classTypeList: List<String>,
@@ -483,10 +493,13 @@ fun LevelDialog(
         )
     }
 }
+
 @Composable
 fun SaveButton(onSaveClicked: () -> Unit) {
     Button(
-        onClick = { onSaveClicked() },
+        onClick = {
+            onSaveClicked()
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)

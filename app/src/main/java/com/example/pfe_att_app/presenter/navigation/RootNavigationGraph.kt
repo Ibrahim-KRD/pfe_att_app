@@ -19,5 +19,7 @@ fun RootNavigationGraph(navHostController: NavHostController){
 
         MainGraph(navHostController)
 
+        StudentMainGraph(navHostController)
+
     }
 }

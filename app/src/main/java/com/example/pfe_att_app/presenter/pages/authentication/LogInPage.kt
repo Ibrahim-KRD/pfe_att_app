@@ -2,6 +2,7 @@ package com.example.pfe_att_app.presenter.pages.authentication
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.ui.unit.dp
@@ -39,6 +41,13 @@ fun LoginPage(
 ) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
+var email = remember { mutableStateOf("")}
+var password = remember { mutableStateOf("")}
+
+
+    val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE) }
+
 
     Scaffold(
         scaffoldState = scaffoldState
@@ -69,15 +78,15 @@ fun LoginPage(
             )
             Spacer(modifier = Modifier.height(48.dp))
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value =email.value,
+                onValueChange = {email.value = it},
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = password.value,
+                onValueChange = {password.value = it},
                 label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -86,25 +95,30 @@ fun LoginPage(
                 onClick = {
 
                     coroutineScope.launch {
-                        var user = authenticationViewModel.login("email", "password")
+                        var user = authenticationViewModel.login(email.value, password.value)
 
-                        if (user != null){
+                        if (user != null) {
 
-                            when(user){
+                            val editor = sharedPreferences.edit()
+                            editor.putInt("USER_ID", user.id)
+                            editor.putString("USER_TYPE", user.javaClass.simpleName)
+                            editor.putString("FIRST_NAME", user.firstName)
+                            editor.putString("LAST_NAME", user.lastName)
+                            editor.apply()
+
+
+                            when (user) {
                                 is Teacher -> {
                                     navController.navigate(Destination.Main.route)
-
                                 }
+
                                 is Student -> {
 
-                                    //todo head to student navigation
-
+                                    navController.navigate(Destination.StudenMainGraph.route)
                                 }
                             }
 
-                        }
-
-                        else {
+                        } else {
 
                             scaffoldState.snackbarHostState.showSnackbar(
                                 message = "user not found , or wrong information",

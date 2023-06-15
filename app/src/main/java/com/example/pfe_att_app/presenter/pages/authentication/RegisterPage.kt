@@ -27,17 +27,76 @@ import com.example.pfe_att_app.domain.entities.Teacher
 import com.example.pfe_att_app.presenter.navigation.Destination
 
 @Composable
-fun RegisterPage(navController: NavController) {
+fun RegisterPage(
+    navController: NavController,
+    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
+) {
 
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+
+    var firstName = remember { mutableStateOf("") }
+
+
+    var lastName = remember { mutableStateOf("") }
+    var adress = remember { mutableStateOf("") }
+    var subscritionYear = remember { mutableStateOf("") }
+    var speciality = remember { mutableStateOf("") }
+    var role = remember { mutableStateOf("") }
+    var email = remember { mutableStateOf("") }
+    var password = remember { mutableStateOf("") }
+    var matricul = remember { mutableStateOf("") }
+    var level = remember { mutableStateOf("") }
+    var group = remember { mutableStateOf("") }
+
+
+    var student = Student(
+        firstName = firstName.value,
+        lastName = lastName.value,
+        adress = adress.value,
+        subscriptionYear = subscritionYear.value,
+        speciality = speciality.value,
+
+        email = email.value,
+        password = password.value,
+        group = group.value,
+        matricule = matricul.value,
+        level = level.value
+    )
+
+    var teacher = Teacher(
+        firstName = firstName.value,
+        lastName = lastName.value,
+        adress = adress.value,
+        subscriptionYear = subscritionYear.value,
+        speciality = speciality.value,
+        role = role.value,
+        email = email.value,
+        password = password.value,
+    )
 
 
     var selectedTab by remember { mutableStateOf(0) }
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        RegisterContent(navController, selectedTab)
+        RegisterContent(
+        navController =     navController,
+      selectedTab =       selectedTab,
+        authenticationViewModel =     authenticationViewModel,
+        student =     student,
+            teacher = teacher,
+         firstName =    firstName,
+           lastName =  lastName,
+        speciality =     speciality,
+        adress =     adress,
+        subscritionYear =     subscritionYear,
+       role =      role,
+        email =     email,
+       password =      password,
+         level =    level,
+          group =   group,
+         matricul =    matricul,
+
+            )
         TabRow(
             selectedTabIndex = selectedTab,
             modifier = Modifier.align(Alignment.TopCenter)
@@ -62,8 +121,23 @@ fun RegisterPage(navController: NavController) {
 fun RegisterContent(
     navController: NavController,
     selectedTab: Int,
-    authenticationViewModel: AuthenticationViewModel = hiltViewModel()
-) {
+    authenticationViewModel: AuthenticationViewModel,
+    student: Student,
+    teacher: Teacher,
+    firstName: MutableState<String>,
+    lastName: MutableState<String>,
+    adress: MutableState<String>,
+    subscritionYear: MutableState<String>,
+    role: MutableState<String>,
+    email: MutableState<String>,
+    password: MutableState<String>,
+    level: MutableState<String>,
+    speciality: MutableState<String>,
+    matricul: MutableState<String>,
+    group: MutableState<String>,
+
+
+    ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colors.background
@@ -78,41 +152,41 @@ fun RegisterContent(
             RegisterHeader(selectedTab)
             Spacer(modifier = Modifier.height(32.dp))
             if (selectedTab == 0) {
-                StudentInfoSection()
+                StudentInfoSection(
+                    firstName = firstName,
+                    lastName = lastName,
+                    adress = adress,
+                    level = level,
+                    group = group,
+                    subscritionYear = subscritionYear,
+                    speciality = speciality,
+                    matricul = matricul,
+                    email = email
+                )
             } else {
-                TeacherInfoSection()
+                TeacherInfoSection(
+                    firstName = firstName,
+                    lastName = lastName,
+                    adress = adress,
+
+                    subscritionYear = subscritionYear,
+                    role = role,
+                    email = email,
+                    speciality = speciality
+                )
             }
             Spacer(modifier = Modifier.height(32.dp))
-            SecurityInfoSection()
+            SecurityInfoSection(password)
+
             Spacer(modifier = Modifier.height(32.dp))
             RegisterButton(selectedTab) {
                 if (selectedTab == 0) {
                     authenticationViewModel.StudentRegister(
-                        Student(
-                            firstName = "maissa",
-                            lastName = "her last name",
-                            adress = "123 Main St",
-                            subscriptionYear = "2018",
-                            matricule = "1234564534",
-                            level = "License 3",
-                            group = 2,
-                            speciality = "Computer Science",
-                            email = "mail",
-                            password = "password"
-                        )
+                        student
                     )
                 } else {
                     authenticationViewModel.TeacherRegister(
-                        Teacher(
-                            firstName = "hiba",
-                            lastName = "Smith",
-                            adress = "456 Elm St",
-                            subscriptionYear = "2018",
-                            speciality = "Mathematics",
-                            role = "Professor",
-                            email = "email",
-                            password = "password"
-                        )
+                        teacher
                     )
                 }
             }
@@ -145,7 +219,20 @@ fun RegisterHeader(selectedTab: Int) {
 }
 
 @Composable
-fun StudentInfoSection() {
+fun StudentInfoSection(
+    firstName: MutableState<String>,
+    lastName: MutableState<String>,
+    adress: MutableState<String>,
+    level: MutableState<String>,
+    email: MutableState<String>,
+    group: MutableState<String>,
+    subscritionYear: MutableState<String>,
+
+    speciality: MutableState<String>,
+    matricul: MutableState<String>
+) {
+
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Student Information",
@@ -154,22 +241,22 @@ fun StudentInfoSection() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = firstName.value,
+            onValueChange = { firstName.value = it },
             label = { Text("First Name") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = lastName.value,
+            onValueChange = { lastName.value = it },
             label = { Text("Last Name") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = email.value,
+            onValueChange = { email.value = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -182,43 +269,43 @@ fun StudentInfoSection() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = adress.value,
+            onValueChange = { adress.value = it },
             label = { Text("Address") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = subscritionYear.value,
+            onValueChange = { subscritionYear.value = it },
             label = { Text("Subscription Year") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = matricul.value,
+            onValueChange = { matricul.value = it },
             label = { Text("Matricule") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = level.value,
+            onValueChange = { level.value = it },
             label = { Text("Level") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = group.value,
+            onValueChange = { group.value = it },
             label = { Text("Group") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = speciality.value,
+            onValueChange = { speciality.value = it },
             label = { Text("Specialty") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -226,7 +313,19 @@ fun StudentInfoSection() {
 }
 
 @Composable
-fun TeacherInfoSection() {
+fun TeacherInfoSection(
+    firstName: MutableState<String>,
+    lastName: MutableState<String>,
+    adress: MutableState<String>,
+
+    subscritionYear: MutableState<String>,
+    email: MutableState<String>,
+    role: MutableState<String>,
+
+    speciality: MutableState<String>,
+) {
+
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Teacher Information",
@@ -235,22 +334,22 @@ fun TeacherInfoSection() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = firstName.value,
+            onValueChange = { firstName.value = it },
             label = { Text("First Name") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = lastName.value,
+            onValueChange = { lastName.value = it },
             label = { Text("Last Name") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = email.value,
+            onValueChange = { email.value = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -263,29 +362,29 @@ fun TeacherInfoSection() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = adress.value,
+            onValueChange = { adress.value = it },
             label = { Text("Address") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = subscritionYear.value,
+            onValueChange = { subscritionYear.value = it },
             label = { Text("Subscription Year") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = speciality.value,
+            onValueChange = { speciality.value = it },
             label = { Text("Speciality") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = role.value,
+            onValueChange = { role.value = it },
             label = { Text("Role") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -293,7 +392,8 @@ fun TeacherInfoSection() {
 }
 
 @Composable
-fun SecurityInfoSection() {
+fun SecurityInfoSection(password: MutableState<String>) {
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Security Information",
@@ -303,11 +403,10 @@ fun SecurityInfoSection() {
         )
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = password.value,
+            onValueChange = { password.value = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
         )
 

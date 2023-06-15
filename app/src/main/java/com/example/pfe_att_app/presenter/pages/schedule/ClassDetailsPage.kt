@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
+import com.example.pfe_att_app.database.relations.SeanceWithModule
 import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.navigation.Destination
@@ -41,21 +42,20 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ClassDetailsPage(
-    seance_id :String?,
+    seance_id: String?,
     navController: NavController,
     scheduleViewModel: ScheduleViewModel = hiltViewModel(),
 
-) {
+    ) {
 
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
 
 
-
-
     val enrollmentsState = remember { mutableStateListOf<EnrollmentWithStudent>() }
 
-    val enrollments: LiveData<List<EnrollmentWithStudent>> = scheduleViewModel.getStudentOf(seance_id!!.toInt())
+    val enrollments: LiveData<List<EnrollmentWithStudent>> =
+        scheduleViewModel.getStudentOf(seance_id!!.toInt())
 
     // Observe the LiveData and update the state object
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -63,9 +63,6 @@ fun ClassDetailsPage(
         enrollmentsState.clear()
         enrollmentsState.addAll(enrollments)
     }
-
-
-
 
 
     val seanceState = remember { mutableStateOf<Seance?>(null) }
@@ -78,20 +75,29 @@ fun ClassDetailsPage(
         seanceState.value = fetched_seance
     }
 
-
+val seance_module : SeanceWithModule? = scheduleViewModel.getSeanceWithModule(seance_id.toInt())
 
 
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
         sheetContent = {
             QRCodeBottomSheetDialog(
-                classInfo = "Module: Math\nClassroom: A101\nTime: 9:00 AM - 10:30 AM"
-            ) { coroutineScope.launch {
-                bottomSheetState.hide()
-            } }
+                classInfo = "Module: ${seance_module!!.module.name}\nClassroom: ${seance_module!!.seance.classroom}\nTime: ${seance_module!!.seance.startTime} AM - ${seance_module!!.seance.endTime} AM"
+            ) {
+                coroutineScope.launch {
+                    bottomSheetState.hide()
+                }
+            }
         }
     ) {
-        SeanceDetailsPage(navController, scheduleViewModel, bottomSheetState,enrollmentsState,seanceState)
+        SeanceDetailsPage(
+            navController,
+            scheduleViewModel,
+            bottomSheetState,
+            enrollmentsState,
+            seanceState,
+            seance_module
+        )
     }
 
 
@@ -107,16 +113,17 @@ fun SeanceDetailsPage(
     bsdialog: ModalBottomSheetState,
     enrollmentsState: SnapshotStateList<EnrollmentWithStudent>,
     seanceState: MutableState<Seance?>,
+    seance_module: SeanceWithModule?,
 
     ) {
-var selectedSceanceIndex = 1 
+    var selectedSceanceIndex = 1
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "module name") },
+                title = { Text(text = seance_module!!.module.name) },
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White,
                 navigationIcon = {
@@ -134,11 +141,11 @@ var selectedSceanceIndex = 1
 
         floatingActionButton = {
             FloatingActionButton(
-                 onClick = { /*impliment the add student feature*/  },
+                onClick = { /*impliment the add student feature*/ },
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White
             ) {
-                Row (modifier = Modifier.padding(4.dp)){
+                Row(modifier = Modifier.padding(4.dp)) {
                     Icon(Icons.Default.Add, contentDescription = "Add Student")
                     Text("Add Student")
                 }
@@ -171,7 +178,7 @@ var selectedSceanceIndex = 1
                         style = MaterialTheme.typography.body1
                     )
                     Button(
-                        onClick = {coroutineScope.launch { bsdialog.show() }}, // Call the lambda function when the button is clicked
+                        onClick = { coroutineScope.launch { bsdialog.show() } }, // Call the lambda function when the button is clicked
                         modifier = Modifier
                             .align(Alignment.End)
                             .padding(top = 8.dp)
@@ -185,7 +192,7 @@ var selectedSceanceIndex = 1
                 style = MaterialTheme.typography.h6,
                 modifier = Modifier.padding(top = 16.dp)
             )
-            BottomSection(enrollmentsState,scheduleViewModel, navController)
+            BottomSection(enrollmentsState, scheduleViewModel, navController,seance_module)
         }
     }
 }
@@ -194,15 +201,20 @@ var selectedSceanceIndex = 1
 fun BottomSection(
     enrollmentsState: SnapshotStateList<EnrollmentWithStudent>,
     scheduleViewModel: ScheduleViewModel,
-    navController: NavController
-){
+    navController: NavController,
+    seance_module: SeanceWithModule?
+) {
     StudentList(
-        enrollmentsState
-        ,navController)
+        enrollmentsState, navController,seance_module
+    )
 }
 
 @Composable
-fun StudentList(students: SnapshotStateList<EnrollmentWithStudent>, navController: NavController) {
+fun StudentList(
+    students: SnapshotStateList<EnrollmentWithStudent>,
+    navController: NavController,
+    seance_module: SeanceWithModule?
+) {
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -210,21 +222,34 @@ fun StudentList(students: SnapshotStateList<EnrollmentWithStudent>, navControlle
     ) {
         items(students) { student ->
 
-            StudentRow( student.student,PresenceState("present" , color = Color.Green),10.0f ,false, navController)
+            StudentRow(
+                student.student,
+                PresenceState("present", color = Color.Green),
+                10.0f,
+                false,
+                navController,seance_module!!.seance.id
+            )
         }
     }
 }
 
 
 @Composable
-fun StudentRow(student: Student, presenceState: PresenceState, mark: Float, hasAttachment: Boolean,navController: NavController) {
+fun StudentRow(
+    student: Student,
+    presenceState: PresenceState,
+    mark: Float,
+    hasAttachment: Boolean,
+    navController: NavController,
+    seance_id: Int
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable(onClick = {
-                navController.navigate("${Destination.AttendenceInformation.route}/2/1")
+                navController.navigate("${Destination.AttendenceInformation.route}/${student.id}/${seance_id}")
             })
 
     ) {
@@ -260,6 +285,7 @@ fun StudentRow(student: Student, presenceState: PresenceState, mark: Float, hasA
         }
     }
 }
+
 data class PresenceState(
     val name: String,
     val color: Color

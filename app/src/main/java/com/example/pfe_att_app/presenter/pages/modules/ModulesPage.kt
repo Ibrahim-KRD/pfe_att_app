@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -44,14 +46,18 @@ fun ModulesPage(
         moduleState.clear()
         moduleState.addAll(contactsList)
     }
+
+    val showDialog = remember { mutableStateOf(false) }
+
+
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = {
                     Text(text = "Modules")
-                }
-                ,
+                },
                 navigationIcon = {
                     IconButton(onClick = {
                         coroutineScope.launch {
@@ -66,17 +72,14 @@ fun ModulesPage(
         drawerContent = {
             // Drawer content
             AppDrawer(navController, scaffoldState)
-        }
-        ,
-        floatingActionButton  = {
+        },
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                   modulesViewModel.AddModule(
-                       Module(name = "Database",
-                     description =       "data structor and stuff like that",
-                      level =      "License 1",
-                       speciality =     "Informatic")
-                   )
+
+
+                    navController.navigate(Destination.AddNewModule.route)
+
                 },
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -88,12 +91,16 @@ fun ModulesPage(
     ) {
 
 
-        ModulePageContent(moduleState,navController)
+        ModulePageContent(moduleState, navController)
+
+
+
 
     }
 }
+
 @Composable
-fun ModulePageContent(modules: List<Module>,navController: NavController) {
+fun ModulePageContent(modules: List<Module>, navController: NavController) {
 
 
     var searchText by remember { mutableStateOf("") }
@@ -121,7 +128,7 @@ fun ModulePageContent(modules: List<Module>,navController: NavController) {
             },
         )
 
-Text(text = "Modules")
+        Text(text = "Modules")
 
         LazyColumn {
             items(modules) { module ->
@@ -133,14 +140,13 @@ Text(text = "Modules")
         }
 
 
-
     }
 
 
-
 }
+
 @Composable
-fun ModuleListRow(module: Module,navController: NavController) {
+fun ModuleListRow(module: Module, navController: NavController) {
     Card(
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 16.dp)

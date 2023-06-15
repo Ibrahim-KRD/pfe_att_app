@@ -12,7 +12,7 @@ class Student(
     subscriptionYear: String,
     var matricule: String,
     var level: String,
-    var group: Int,
+    var group: String,
     var speciality: String,
     email:String,
     password : String

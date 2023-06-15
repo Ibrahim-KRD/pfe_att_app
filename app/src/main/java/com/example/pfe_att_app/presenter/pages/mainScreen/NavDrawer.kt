@@ -1,6 +1,7 @@
 package com.example.pfe_att_app.presenter.pages.mainScreen
 
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,12 +10,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -36,10 +39,18 @@ fun AppDrawer(
 
 
     var cs = rememberCoroutineScope()
+    val context = LocalContext.current
+    val sharedPreferences = remember { context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE) }
+
+    // Retrieve user information from SharedPreferences
+    val userId = sharedPreferences.getInt("USER_ID", 0)
+    val userType = sharedPreferences.getString("USER_TYPE", "")
+    val firstName = sharedPreferences.getString("FIRST_NAME", "")
+    val lastName = sharedPreferences.getString("LAST_NAME", "")
 
 
     DrawerBody(
-        Teacher("John", "Doe", "123 Main St", "2022", "Mathematics", "Professor","",""),
+        Teacher(firstName!!, lastName!!, "123 Main St", "2022", "Mathematics", userType!!,"",""),
         navController.currentDestination,
         { navController.navigate(Destination.Schedule.route) },
         { navController.navigate(Destination.Schedule.route) },

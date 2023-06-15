@@ -8,6 +8,8 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.database.relations.SeanceWithModule
+import com.example.pfe_att_app.domain.entities.Enrollment
 import com.example.pfe_att_app.domain.entities.Seance
 
 @Dao
@@ -24,9 +26,23 @@ interface SeanceDao {
 
 
     @Transaction
+    @Insert
+    fun insertSeanceWithEnrollments(seance: Seance, enrollments: List<Enrollment>)
+
+
+    @Transaction
     @Query("SELECT * FROM seance")
     fun getSeanceWithResponsibleAndModule(): LiveData<List<SceancewithResponsibleAndModule>>
 
     @Query("Select * from seance where id = :id")
     fun getSeanceById(id: Int): LiveData<Seance>
+
+
+    @Transaction
+    @Query("SELECT * FROM Seance where id = :seance_id ")
+    fun getSeancesWithModule(seance_id:Int): SeanceWithModule?
+
+    @Query("SELECT MAX(id) from seance")
+    fun getLastSavedseance():Int?
+
 }

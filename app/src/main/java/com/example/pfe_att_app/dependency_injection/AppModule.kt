@@ -33,8 +33,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideScheduleRepository(seanceDao: SeanceDao,enrollementDao: EnrollementDao): IScheduleRepository {
-        return ScheduleRepository(seanceDao,enrollementDao)
+    fun provideScheduleRepository(seanceDao: SeanceDao,enrollementDao: EnrollementDao,studentDao: StudentDao): IScheduleRepository {
+        return ScheduleRepository(seanceDao,enrollementDao,studentDao)
     }
     @Provides
     @Singleton
@@ -79,10 +79,14 @@ object AppModule {
         return database.seanceDao()
     }
 
+
+
     @Provides
     @Singleton
     fun provideAuthenticationRepository(teacherDao: TeacherDao,studentDao: StudentDao): IAuthenticationRepository {
         return AuthenticationRepository(teacherDao,studentDao)
     }
+
+
 
 }

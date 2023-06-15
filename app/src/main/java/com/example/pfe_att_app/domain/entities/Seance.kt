@@ -12,6 +12,7 @@ class Seance(
    var classType: String,
    var startTime: String,
     var endTime: String,
+    var level :String,
    var group: String,
    var classroom: String,
    var description: String,

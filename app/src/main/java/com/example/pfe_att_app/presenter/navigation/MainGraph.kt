@@ -1,8 +1,6 @@
 package com.example.pfe_att_app.presenter.navigation
 
 import CreateSessionPage
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -10,11 +8,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.pfe_att_app.presenter.pages.attendence.AttendenceInformationPage
+import com.example.pfe_att_app.presenter.pages.dialogs.CreateModulePage
 import com.example.pfe_att_app.presenter.pages.modules.ModuleDetailsScreen
 import com.example.pfe_att_app.presenter.pages.modules.ModulesPage
 import com.example.pfe_att_app.presenter.pages.schedule.ClassDetailsPage
 import com.example.pfe_att_app.presenter.pages.schedule.SchedulePage
-import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 
 fun NavGraphBuilder.MainGraph(navController: NavController) {
 
@@ -73,6 +71,10 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
 
         composable(route = Destination.AddNewSessionPage.route){
             CreateSessionPage(navController)
+        }
+
+        composable(route = Destination.AddNewModule.route){
+            CreateModulePage(navController = navController)
         }
 
     }

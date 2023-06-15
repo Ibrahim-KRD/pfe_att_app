@@ -211,40 +211,41 @@ fun SeanceList(
     }
 }
 
-
 @Composable
 fun SceanceCard(
     sceance: SceancewithResponsibleAndModule,
     navController: NavController,
     scheduleViewModel: ScheduleViewModel
 ) {
-    Card(shape = RoundedCornerShape(8.dp),
+    Card(
+        shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-
                 navController.navigate("${Destination.ClassDetails.route}/${sceance.sceance.id}")
-            }) {
+            }
+    ) {
         Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Module: ${sceance.module.name}", style = MaterialTheme.typography.h6
+                    text = "Module: ${sceance.module.name}",
+                    style = MaterialTheme.typography.h6
                 )
                 Text(
                     text = "Speciality: ${sceance.module.speciality}",
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Level: ${sceance.module.level}", style = MaterialTheme.typography.body1
+                    text = "Level: ${sceance.module.level}",
+                    style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = "Group: ${sceance.sceance.group}", style = MaterialTheme.typography.body1
+                    text = "Group: ${sceance.sceance.group}",
+                    style = MaterialTheme.typography.body1
                 )
                 Text(
                     text = "Classroom: ${sceance.sceance.classroom}",
@@ -252,27 +253,52 @@ fun SceanceCard(
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
-            ClassTimeline(
-                startTime = sceance.sceance.startTime,
-                endTime = sceance.sceance.endTime,
-                20,
-
+            Column(
+                modifier = Modifier.padding(top = 4.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                ClassTimeline(
+                    startTime = sceance.sceance.startTime,
+                    endTime = sceance.sceance.endTime,
+                    duration = 20
                 )
+            }
         }
     }
 }
 
 @Composable
 fun ClassTimeline(startTime: String, endTime: String, duration: Int) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+    Row(
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = Icons.Filled.DateRange, contentDescription = "Start time"
+            imageVector = Icons.Filled.DateRange,
+            contentDescription = "Start time",
+            tint = MaterialTheme.colors.primary
         )
-        Text(
-            text = " ${startTime} - ${endTime}", style = MaterialTheme.typography.caption
-        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Column {
+            Text(
+                text = "Start Time",
+                style = MaterialTheme.typography.caption
+            )
+            Text(
+                text = startTime,
+                style = MaterialTheme.typography.body2
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Column {
+            Text(
+                text = "End Time",
+                style = MaterialTheme.typography.caption
+            )
+            Text(
+                text = endTime,
+                style = MaterialTheme.typography.body2
+            )
+        }
     }
 }
 

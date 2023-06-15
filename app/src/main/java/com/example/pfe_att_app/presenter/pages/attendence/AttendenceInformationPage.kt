@@ -3,6 +3,7 @@ package com.example.pfe_att_app.presenter.pages.attendence
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -37,19 +38,10 @@ fun AttendenceInformationPage(
     val coroutineScope = rememberCoroutineScope()
 
 
-    val dataState = remember { mutableStateOf<EnrollmentWithSeanceStudentModule?>(null) }
-
-    val data: LiveData<EnrollmentWithSeanceStudentModule?> =
-        scheduleViewModel.getEnrollmentWithStudentModuleSeance(
-            student_id!!.toInt(),
-            seance_id!!.toInt()
-        )
-
-// Observe the LiveData and update the state object
-    val _lifecycleOwner = LocalLifecycleOwner.current
-    data.observe(_lifecycleOwner) { fetched_seance ->
-        dataState.value = fetched_seance
-    }
+    var enrollmentWithSeanceStudentModule = scheduleViewModel.getEnrollmentWithStudentModuleSeance(
+        student_id!!.toInt(),
+        seance_id!!.toInt()
+    )
 
 
 
@@ -72,41 +64,38 @@ fun AttendenceInformationPage(
 
     }) {
         StudentDetailsScreen(
-             Student(seance_id, student_id, "456 Elm St", "2021", "654321", "Bachelor", 2, "Mathematics","","")
-                 //student = dataState.value!!.student
+//
+            enrollmentWithSeanceStudentModule!!
         )
     }
 }
 
 @Composable
-fun StudentDetailsScreen(student: Student) {
-
-
+fun StudentDetailsScreen(information: EnrollmentWithSeanceStudentModule) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-
     ) {
         // Top section with student and class information
-        Column(
+        Card(
             modifier = Modifier
-                .fillMaxWidth()
-                .shadow(1.dp)
-                .background(lightRed)
+                .fillMaxWidth(),
+            backgroundColor = lightRed,
+            elevation = 2.dp,
 
-        ) {
+            ) {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "module.name",
+                    text = information.seance.description,
                     style = MaterialTheme.typography.h4,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Speciality",
+                    text = information.student.speciality,
                     style = MaterialTheme.typography.subtitle1,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -120,11 +109,11 @@ fun StudentDetailsScreen(student: Student) {
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "Student: ${student.firstName} ${student.lastName} ",
+                            text = "Student:",
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(
-                            text = "${student.firstName} ${student.lastName}",
+                            text = "${information.student.firstName} ${information.student.lastName}",
                             style = MaterialTheme.typography.body1
                         )
                     }
@@ -136,7 +125,7 @@ fun StudentDetailsScreen(student: Student) {
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(
-                            text = "A",
+                            text = information.student.group,
                             style = MaterialTheme.typography.body1
                         )
                     }
@@ -148,7 +137,7 @@ fun StudentDetailsScreen(student: Student) {
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(
-                            text = "License",
+                            text = information.student.level,
                             style = MaterialTheme.typography.body1
                         )
                     }
@@ -166,7 +155,7 @@ fun StudentDetailsScreen(student: Student) {
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(
-                            text = "inf03",
+                            text = information.seance.classroom,
                             style = MaterialTheme.typography.body1
                         )
                     }
@@ -178,7 +167,7 @@ fun StudentDetailsScreen(student: Student) {
                             style = MaterialTheme.typography.subtitle2
                         )
                         Text(
-                            text = "TP",
+                            text = information.seance.classType,
                             style = MaterialTheme.typography.body1
                         )
                     }
@@ -202,6 +191,5 @@ fun StudentDetailsScreen(student: Student) {
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier.padding(top = 16.dp)
         )
-
     }
 }

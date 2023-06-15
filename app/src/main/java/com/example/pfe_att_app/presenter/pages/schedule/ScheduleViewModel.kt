@@ -3,13 +3,17 @@ package com.example.pfe_att_app.presenter.pages.schedule
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.database.relations.SeanceWithModule
 import com.example.pfe_att_app.domain.entities.Seance
+import com.example.pfe_att_app.domain.entities.Student
 
 import com.example.pfe_att_app.infrastructure.repositories.ScheduleRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -65,8 +69,8 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
 //endregion
 
 
-    fun AddSceanceToSchedule(sceance: Seance) {
-        scheduleRepository.AddToSchedule(sceance)
+    fun AddSceanceToSchedule(sceance: Seance, students: List<Student?>?) {
+        scheduleRepository.AddToSchedule(sceance, students as List<Student>)
     }
 
     fun getSchedule(): LiveData<List<SceancewithResponsibleAndModule>> {
@@ -82,8 +86,23 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
         return scheduleRepository.getSeance(id)
     }
 
-    fun getEnrollmentWithStudentModuleSeance(student_id:Int , seance_id:Int):LiveData<EnrollmentWithSeanceStudentModule?>{
+    fun getEnrollmentWithStudentModuleSeance(student_id:Int , seance_id:Int):EnrollmentWithSeanceStudentModule?{
         return scheduleRepository.getEnrolmmentWithModule_seance_student(student_id,seance_id)
+    }
+
+
+    fun getStudents(): List<Student?>? {
+
+       var students : List<Student?>? = null
+
+        viewModelScope.launch {
+            students = scheduleRepository.getStudent()
+        }
+        return students
+    }
+
+    fun getSeanceWithModule(seance_id: Int):SeanceWithModule?{
+        return scheduleRepository.getSceaneWithModule(seance_id)
     }
 
 }

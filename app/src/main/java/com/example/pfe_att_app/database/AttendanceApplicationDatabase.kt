@@ -25,13 +25,8 @@ abstract class AttendanceApplicationDatabase : RoomDatabase() {
     abstract fun studentDao():StudentDao
 
 companion object{
-
-
     @Volatile
     private var INSTANCE : AttendanceApplicationDatabase? = null
-
-
-
     fun getInstance(context: Context): AttendanceApplicationDatabase {
         // only one thread of execution at a time can enter this block of code
         synchronized(this) {
