@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,11 +33,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.pfe_att_app.database.relations.EnrollementWithSeance
+import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
+import com.example.pfe_att_app.domain.entities.Enrollment
 import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 import com.example.pfe_att_app.utils.QrCodeAnalyzer
 @Composable
-fun QrCodeScannerPage(seance_id:String?,navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()) {
+fun QrCodeScannerPage(enrollment_id:String?,navController: NavController,scheduleViewModel: ScheduleViewModel = hiltViewModel()) {
     var code by remember { mutableStateOf("") }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -49,6 +54,7 @@ fun QrCodeScannerPage(seance_id:String?,navController: NavController,scheduleVie
             ) == PackageManager.PERMISSION_GRANTED
         )
     }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
@@ -58,6 +64,15 @@ fun QrCodeScannerPage(seance_id:String?,navController: NavController,scheduleVie
     LaunchedEffect(key1 = true) {
         launcher.launch(Manifest.permission.CAMERA)
     }
+
+    val current_enrollement = scheduleViewModel.getEnrollement(enrollement_id = enrollment_id!!.toInt())
+
+
+
+
+
+
+
     Column(modifier = Modifier.fillMaxSize()) {
         if (hasCamPermission) {
             AndroidView(
@@ -70,6 +85,7 @@ fun QrCodeScannerPage(seance_id:String?,navController: NavController,scheduleVie
                         .build()
                     val qrCodeAnalyzer = QrCodeAnalyzer { result ->
                         code = result
+
 
                     }
                     preview.setSurfaceProvider(previewView.surfaceProvider)
@@ -103,7 +119,7 @@ fun QrCodeScannerPage(seance_id:String?,navController: NavController,scheduleVie
 
                     }
                 }) {
-                    Text(text = "Validate")
+                    Text(text = "Validate presence")
                 }
             }
         }

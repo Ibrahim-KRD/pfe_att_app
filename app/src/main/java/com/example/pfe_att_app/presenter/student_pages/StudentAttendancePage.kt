@@ -30,7 +30,7 @@ fun AttendenceInformationPage(
     scheduleViewModel: ScheduleViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
-
+println("attendece of student  ${student_id} and seance ${seance_id}")
     var enrollmentWithSeanceStudentModule = scheduleViewModel.getEnrollmentWithStudentModuleSeance(
         student_id!!.toInt(),
         seance_id!!.toInt()
@@ -58,7 +58,7 @@ fun AttendenceInformationPage(
         {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("${Destination.QrCodeScannerPage.route}/${seance_id}")
+                    navController.navigate("${Destination.QrCodeScannerPage.route}/${enrollmentWithSeanceStudentModule!!.enrollment.id}")
                 },
                 content = {
                     Text(text = "Scan QR COde")

@@ -19,16 +19,16 @@ fun NavGraphBuilder.StudentMainGraph(
         startDestination = Destination.StudentSchedule.route
     ) {
 
-        composable(route = Destination.QrCodeScannerPage.route + "/{seance_id}",
+        composable(route = Destination.QrCodeScannerPage.route + "/{enrollment_id}",
             arguments = listOf(
-                navArgument("seance_id") {
+                navArgument("enrollment_id") {
                     type = NavType.StringType
                     defaultValue = "1"
                     nullable = true
                 }
             )) { entry ->
             QrCodeScannerPage(
-                seance_id = entry.arguments?.getString("seance_id"),
+                enrollment_id = entry.arguments?.getString("enrollment_id"),
                 navController = navController
             )
         }

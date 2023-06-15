@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import com.example.pfe_att_app.database.EnrollementDao
 import com.example.pfe_att_app.database.SeanceDao
 import com.example.pfe_att_app.database.StudentDao
+import com.example.pfe_att_app.database.relations.EnrollementWithSeance
 import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
@@ -60,9 +61,13 @@ class ScheduleRepository @Inject constructor(
         return seanceDao.getSeanceWithResponsibleAndModule()
 
     }
-    override fun getStuedntScheduleof(date: LocalDate,studentId:Int): LiveData<List<SceancewithResponsibleAndModule>> {
 
-        return seanceDao.getSeanceWithResponsibleAndModuleForStudent(studentId)
+    override fun getStuedntScheduleof(
+        date: LocalDate,
+        studentId: Int
+    ): LiveData<List<SceancewithResponsibleAndModule>> {
+
+        return seanceDao.getSeanceWithResponsibleAndModuleForStudent()
 
     }
 
@@ -124,13 +129,29 @@ class ScheduleRepository @Inject constructor(
     }
 
     override fun getScheduleForTeacher(date: LocalDate): List<SceancewithResponsibleAndModule?>? {
-        var seances :List<SceancewithResponsibleAndModule?>? = null
+        var seances: List<SceancewithResponsibleAndModule?>? = null
         runBlocking {
             withContext(Dispatchers.IO) {
                 seances = seanceDao.getSeanceWithResponsibleAndModuleForTeacher(date.toString())
 
-            }}
+            }
+        }
         return seances
+    }
+
+    override fun getEnrollement(enrollement_id: Int): Enrollment? {
+        var enrollment: Enrollment?
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                enrollment = enrollementDao.getEnrollement(enrollement_id)
+
+            }
+        }
+        return enrollment
+    }
+
+    override fun UpdateEnrollementState(enrollment: Enrollment) {
+        enrollementDao.Update(enrollment)
     }
 
 

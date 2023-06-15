@@ -4,10 +4,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.pfe_att_app.database.relations.EnrollementWithSeance
 import com.example.pfe_att_app.database.relations.EnrollmentWithSeanceStudentModule
 import com.example.pfe_att_app.database.relations.EnrollmentWithStudent
 import com.example.pfe_att_app.database.relations.SceancewithResponsibleAndModule
 import com.example.pfe_att_app.database.relations.SeanceWithModule
+import com.example.pfe_att_app.domain.entities.Enrollment
 import com.example.pfe_att_app.domain.entities.Seance
 import com.example.pfe_att_app.domain.entities.Student
 
@@ -113,6 +115,17 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
 
     fun getSeanceWithModule(seance_id: Int):SeanceWithModule?{
         return scheduleRepository.getSceaneWithModule(seance_id)
+    }
+
+    fun getEnrollement(enrollement_id:Int):Enrollment?{
+        return scheduleRepository.getEnrollement(enrollement_id)
+
+    }
+
+    fun UpdateEnrollementState(enrollment: Enrollment){
+        viewModelScope.launch {
+            scheduleRepository.UpdateEnrollementState(enrollment)
+        }
     }
 
 }

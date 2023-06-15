@@ -251,7 +251,7 @@ fun SceanceCard(
             .clickable {
 
             //    navController.navigate("${Destination.StudentAttendqnceInformation.route}/${userId}/${sceance.sceance.id}")
-                navController.navigate("${Destination.StudentAttendqnceInformation.route}/${userId}/3")
+                navController.navigate("${Destination.StudentAttendqnceInformation.route}/${userId}/${sceance.sceance.id}")
 
             }) {
         Row(
