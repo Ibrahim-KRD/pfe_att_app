@@ -13,6 +13,10 @@ sealed class Destination(val route: String) {
     object ModuleDetailsPage : Destination("moduleDetails")
     object AddNewSessionPage : Destination("newSessoin")
     object AddNewModule : Destination("new_module")
+    object SearchPage : Destination("search_page")
+    object ProfilePage : Destination("profile_page")
+
+
 //endregion
 
 

@@ -13,6 +13,7 @@ public interface IScheduleRepository {
      fun AddToSchedule(sceance: Seance,students:List<Student>)
      fun DeleteFromSchedule(sceance: Seance)
      fun getSchedule(date: LocalDate):LiveData<List<SceancewithResponsibleAndModule>>
+     fun getStuedntScheduleof(date: LocalDate,studentId:Int):LiveData<List<SceancewithResponsibleAndModule>>
      fun getStudentsOfSeance(sceance_id: Int):LiveData<List<EnrollmentWithStudent>>
      fun getSeance(id:Int):LiveData<Seance>
 
@@ -24,5 +25,6 @@ public interface IScheduleRepository {
 
      fun getLastSeanceID():Int?
 
-// TODO:     EditOnSchedule(sceance: Sceance)
+     fun getScheduleForTeacher(date: LocalDate):List<SceancewithResponsibleAndModule?>?
+
 }

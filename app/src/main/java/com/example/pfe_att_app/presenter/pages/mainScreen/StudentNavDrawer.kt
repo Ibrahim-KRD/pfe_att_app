@@ -1,6 +1,7 @@
 package com.example.pfe_att_app.presenter.pages.mainScreen
 
 
+
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,7 +30,7 @@ import com.example.pfe_att_app.presenter.navigation.Destination
 
 
 @Composable
-fun AppDrawer(
+fun StudentAppDrawer(
     navController: NavController,
 
     scaffoldState: ScaffoldState,
@@ -39,6 +40,8 @@ fun AppDrawer(
 
 
     var cs = rememberCoroutineScope()
+
+//region get saved logged in information
     val context = LocalContext.current
     val sharedPreferences = remember { context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE) }
 
@@ -47,15 +50,15 @@ fun AppDrawer(
     val userType = sharedPreferences.getString("USER_TYPE", "")
     val firstName = sharedPreferences.getString("FIRST_NAME", "")
     val lastName = sharedPreferences.getString("LAST_NAME", "")
+//endregion
 
-
-    DrawerBody(
+    StudentDrawerBody(
         Teacher(firstName!!, lastName!!, "123 Main St", "2022", "Mathematics", userType!!,"","",""),
         navController.currentDestination,
-        { navController.navigate(Destination.SearchPage.route) },
-        { navController.navigate(Destination.Schedule.route) },
-        { navController.navigate(Destination.Modules.route) },
-        { navController.navigate(Destination.ProfilePage.route) },
+        { navController.navigate(Destination.StudentSchedule.route) },
+        { navController.navigate(Destination.StudentSchedule.route) },
+        { navController.navigate(Destination.StudentSchedule.route) },
+        { navController.navigate(Destination.StudentSchedule.route) },
         { navController.navigate(Destination.Authentication.route) }
     )
 
@@ -64,7 +67,7 @@ fun AppDrawer(
 
 
 @Composable
-fun DrawerBody(
+fun StudentDrawerBody(
     loggedInUser: Teacher,
     currentDestination: NavDestination?,
     navigateToSearch: () -> Unit,
@@ -99,24 +102,14 @@ fun DrawerBody(
         }
         // Menu items
         Column(modifier = Modifier.weight(1f)) {
-            NavigationItem(
-                text = "Search",
-                icon = Icons.Default.Search,
-                isSelected = currentDestination?.route == "search",
-                onClick = navigateToSearch
-            )
+
             NavigationItem(
                 text = "Schedule",
                 icon = Icons.Default.DateRange,
                 isSelected = currentDestination?.route == "schedule",
                 onClick = navigateToSchedule
             )
-            NavigationItem(
-                text = "Modules",
-                icon = Icons.Default.Info,
-                isSelected = currentDestination?.route == "modules",
-                onClick = navigateToModules
-            )
+
             NavigationItem(
                 text = "Settings",
                 icon = Icons.Default.Settings,
@@ -126,7 +119,7 @@ fun DrawerBody(
         }
         // Logout button
         Button(
-            onClick = logout,
+            onClick = { },
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth()

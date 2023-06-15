@@ -31,8 +31,17 @@ interface SeanceDao {
 
 
     @Transaction
-    @Query("SELECT * FROM seance")
+    @Query("SELECT * FROM seance ")
     fun getSeanceWithResponsibleAndModule(): LiveData<List<SceancewithResponsibleAndModule>>
+
+    @Transaction
+    @Query("SELECT * FROM seance s , enrollments e where s.id = e.seance_id and e.student_id = :studentId ")
+    fun getSeanceWithResponsibleAndModuleForStudent(studentId:Int): LiveData<List<SceancewithResponsibleAndModule>>
+
+    @Transaction
+    @Query("SELECT * FROM seance where day = :date")
+    fun getSeanceWithResponsibleAndModuleForTeacher(date:String): List<SceancewithResponsibleAndModule?>?
+
 
     @Query("Select * from seance where id = :id")
     fun getSeanceById(id: Int): LiveData<Seance>

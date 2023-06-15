@@ -15,7 +15,8 @@ class Student(
     var group: String,
     var speciality: String,
     email:String,
-    password : String
+    password : String,
+    phone:String
 ) : Person(
     firstName = firstName,
     lastName = lastName,
@@ -24,5 +25,8 @@ class Student(
 
     subscriptionYear = subscriptionYear,
     password = password,
-    email = email
+    email = email,
+    phone = phone
+
+
 )

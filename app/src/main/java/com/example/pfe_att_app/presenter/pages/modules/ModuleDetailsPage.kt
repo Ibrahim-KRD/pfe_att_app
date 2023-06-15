@@ -81,7 +81,7 @@ topBar = {
 
                 ClassTabView(
                     scheduleState
-                ) { navController.navigate("${Destination.ClassDetails.route}/2") }
+                ) { navController.navigate("${Destination.ClassDetails.route}/1") }
 
             }
 

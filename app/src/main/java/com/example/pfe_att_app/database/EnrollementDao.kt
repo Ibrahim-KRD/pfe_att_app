@@ -14,8 +14,8 @@ import com.example.pfe_att_app.domain.entities.Seance
 interface EnrollementDao {
 
     @Transaction
-    @Query("SELECT * FROM enrollments")
-    fun getEnrollmentsOfClass(): LiveData<List<EnrollmentWithStudent>>
+    @Query("SELECT * FROM enrollments where seance_id = :sceance_id")
+    fun getEnrollmentsOfClass(sceance_id: Int): LiveData<List<EnrollmentWithStudent>>
 
     @Insert
     suspend fun Insert(enrollment: Enrollment)

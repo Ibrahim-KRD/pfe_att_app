@@ -25,6 +25,9 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
     ViewModel() {
 
 
+    var seances: LiveData<List<SceancewithResponsibleAndModule>> = getSchedule()
+
+
     //region day navigation
     val currentDate = mutableStateOf(LocalDate.now())
     fun incrementMonth() {
@@ -74,8 +77,15 @@ class ScheduleViewModel @Inject constructor(private val scheduleRepository: Sche
     }
 
     fun getSchedule(): LiveData<List<SceancewithResponsibleAndModule>> {
-
         return scheduleRepository.getSchedule(LocalDate.now())
+    }
+
+    fun getStudentSchedule(studentId:Int): LiveData<List<SceancewithResponsibleAndModule>> {
+        return scheduleRepository.getStuedntScheduleof(LocalDate.now(),studentId)
+    }
+
+    fun getScheduleForTeacher():List<SceancewithResponsibleAndModule?>?{
+        return scheduleRepository.getScheduleForTeacher(currentDate.value)
     }
 
     fun getStudentOf(seance_id: Int): LiveData<List<EnrollmentWithStudent>> {

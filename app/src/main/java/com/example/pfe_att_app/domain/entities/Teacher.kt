@@ -13,11 +13,13 @@ class Teacher(
     var speciality: String,
     var role: String,
     email: String,
-    password: String
+    password: String,
+    phone:String
 ) : Person(
     firstName = firstName, lastName = lastName,
     adress = adress,
     subscriptionYear = subscriptionYear,
     password = password,
-    email = email
+    email = email,
+    phone = phone
 )

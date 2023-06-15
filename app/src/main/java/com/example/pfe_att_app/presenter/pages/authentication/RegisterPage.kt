@@ -46,6 +46,7 @@ fun RegisterPage(
     var matricul = remember { mutableStateOf("") }
     var level = remember { mutableStateOf("") }
     var group = remember { mutableStateOf("") }
+    var phoneNumber = remember { mutableStateOf("") }
 
 
     var student = Student(
@@ -59,7 +60,9 @@ fun RegisterPage(
         password = password.value,
         group = group.value,
         matricule = matricul.value,
-        level = level.value
+        level = level.value,
+        phone = phoneNumber.value
+
     )
 
     var teacher = Teacher(
@@ -71,6 +74,7 @@ fun RegisterPage(
         role = role.value,
         email = email.value,
         password = password.value,
+        phone = phoneNumber.value
     )
 
 
@@ -95,7 +99,7 @@ fun RegisterPage(
          level =    level,
           group =   group,
          matricul =    matricul,
-
+phoneNumber = phoneNumber
             )
         TabRow(
             selectedTabIndex = selectedTab,
@@ -135,6 +139,7 @@ fun RegisterContent(
     speciality: MutableState<String>,
     matricul: MutableState<String>,
     group: MutableState<String>,
+    phoneNumber: MutableState<String>
 
 
     ) {
@@ -161,7 +166,8 @@ fun RegisterContent(
                     subscritionYear = subscritionYear,
                     speciality = speciality,
                     matricul = matricul,
-                    email = email
+                    email = email,
+                    phoneNumber = phoneNumber
                 )
             } else {
                 TeacherInfoSection(
@@ -227,6 +233,7 @@ fun StudentInfoSection(
     email: MutableState<String>,
     group: MutableState<String>,
     subscritionYear: MutableState<String>,
+    phoneNumber: MutableState<String>,
 
     speciality: MutableState<String>,
     matricul: MutableState<String>
@@ -262,8 +269,8 @@ fun StudentInfoSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = phoneNumber.value,
+            onValueChange = {phoneNumber.value = it},
             label = { Text("Phone Number") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -393,7 +400,7 @@ fun TeacherInfoSection(
 
 @Composable
 fun SecurityInfoSection(password: MutableState<String>) {
-
+var password_confirmation = remember { mutableStateOf("")}
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "Security Information",
@@ -411,8 +418,8 @@ fun SecurityInfoSection(password: MutableState<String>) {
         )
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = password_confirmation.value,
+            onValueChange = {password_confirmation.value = it},
             label = { Text("Confirm Password") },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),

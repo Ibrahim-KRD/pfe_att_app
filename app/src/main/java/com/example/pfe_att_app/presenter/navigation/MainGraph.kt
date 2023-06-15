@@ -11,8 +11,10 @@ import com.example.pfe_att_app.presenter.pages.attendence.AttendenceInformationP
 import com.example.pfe_att_app.presenter.pages.dialogs.CreateModulePage
 import com.example.pfe_att_app.presenter.pages.modules.ModuleDetailsScreen
 import com.example.pfe_att_app.presenter.pages.modules.ModulesPage
+import com.example.pfe_att_app.presenter.pages.profile.ProfilePage
 import com.example.pfe_att_app.presenter.pages.schedule.ClassDetailsPage
 import com.example.pfe_att_app.presenter.pages.schedule.SchedulePage
+import com.example.pfe_att_app.presenter.pages.search.SearchPage
 
 fun NavGraphBuilder.MainGraph(navController: NavController) {
 
@@ -75,6 +77,14 @@ fun NavGraphBuilder.MainGraph(navController: NavController) {
 
         composable(route = Destination.AddNewModule.route){
             CreateModulePage(navController = navController)
+        }
+
+        composable(route = Destination.SearchPage.route){
+            SearchPage(navController = navController)
+        }
+
+        composable(route = Destination.ProfilePage.route){
+            ProfilePage(navController = navController)
         }
 
     }

@@ -56,12 +56,18 @@ class ScheduleRepository @Inject constructor(
     }
 
     override fun getSchedule(date: LocalDate): LiveData<List<SceancewithResponsibleAndModule>> {
+
         return seanceDao.getSeanceWithResponsibleAndModule()
+
+    }
+    override fun getStuedntScheduleof(date: LocalDate,studentId:Int): LiveData<List<SceancewithResponsibleAndModule>> {
+
+        return seanceDao.getSeanceWithResponsibleAndModuleForStudent(studentId)
 
     }
 
     override fun getStudentsOfSeance(sceance_id: Int): LiveData<List<EnrollmentWithStudent>> {
-        return enrollementDao.getEnrollmentsOfClass()
+        return enrollementDao.getEnrollmentsOfClass(sceance_id)
 
     }
 
@@ -115,6 +121,16 @@ class ScheduleRepository @Inject constructor(
             }
         }
         return last_id
+    }
+
+    override fun getScheduleForTeacher(date: LocalDate): List<SceancewithResponsibleAndModule?>? {
+        var seances :List<SceancewithResponsibleAndModule?>? = null
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                seances = seanceDao.getSeanceWithResponsibleAndModuleForTeacher(date.toString())
+
+            }}
+        return seances
     }
 
 

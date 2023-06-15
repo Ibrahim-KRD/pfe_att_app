@@ -48,7 +48,6 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.example.pfe_att_app.domain.entities.Module
 import com.example.pfe_att_app.domain.entities.Seance
-import com.example.pfe_att_app.domain.entities.Student
 import com.example.pfe_att_app.presenter.pages.modules.ModulesViewModel
 import com.example.pfe_att_app.presenter.pages.schedule.ScheduleViewModel
 import java.time.DayOfWeek
@@ -76,7 +75,7 @@ fun CreateSessionPage(
     val selectedModule = remember { mutableStateOf<Module?>(null) }
 
 
-    val selectedDay = remember { mutableStateOf<DayOfWeek?>(null) }
+    val selectedDay = remember { mutableStateOf<LocalDate?>(null) }
     val selectedStartTime = remember { mutableStateOf<LocalTime?>(null) }
     val selectedEndTime = remember { mutableStateOf<LocalTime?>(null) }
 
@@ -88,6 +87,7 @@ fun CreateSessionPage(
     val selectedLevel = remember { mutableStateOf("") }
 
     val selectedClassroom = remember { mutableStateOf("") }
+    val group = remember { mutableStateOf("") }
 
     // Retrieve user id information from SharedPreferences
 
@@ -127,7 +127,8 @@ fun CreateSessionPage(
                 levelList = levelList,
                 selectedClassType = selectedClassType,
                 selectedLevel = selectedLevel,
-                selectedClassroom = selectedClassroom
+                selectedClassroom = selectedClassroom,
+                group = group
             )
             SaveButton(onSaveClicked = {
 
@@ -139,13 +140,13 @@ fun CreateSessionPage(
                         classType = selectedClassType.value,
                         startTime = selectedStartTime.value.toString(),
                         endTime = selectedEndTime.value.toString(),
-                        group = selectedLevel.value,
+                        group = group.value,
                         classroom = selectedClassroom.value,
                         description = "Dummy session description",
                         responsible_id = userId!!,
-                        level = selectedLevel.value
-
-                    ),students
+                        level = selectedLevel.value,
+                    day = selectedDay.value.toString()
+                    ), students
 
                 )
                 navController.popBackStack()
@@ -242,7 +243,7 @@ fun SectionTitle(title: String) {
 
 @Composable
 fun TimingSection(
-    selectedDay: MutableState<DayOfWeek?>,
+    selectedDay: MutableState<LocalDate?>,
     selectedStartTime: MutableState<LocalTime?>,
     selectedEndTime: MutableState<LocalTime?>,
     context: Context,
@@ -289,8 +290,8 @@ fun TimingSection(
 
 @Composable
 fun DayPicker(
-    selectedDay: DayOfWeek?,
-    onDaySelected: (DayOfWeek) -> Unit,
+    selectedDay: LocalDate?,
+    onDaySelected: (LocalDate) -> Unit,
     context: Context,
     modifier: Modifier = Modifier
 ) {
@@ -306,7 +307,7 @@ fun DayPicker(
 
     Box(modifier = modifier) {
         Text(
-            text = selectedDay?.name ?: "Select Day",
+            text = selectedDay?.toString() ?: "Select Day",
             modifier = Modifier
                 .clickable {
                     // Open day picker dialog
@@ -315,7 +316,7 @@ fun DayPicker(
                         context,
                         { _, year, month, dayOfMonth ->
                             val selectedDate = LocalDate.of(year, month + 1, dayOfMonth)
-                            val selectedDayOfWeek = selectedDate.dayOfWeek
+                            val selectedDayOfWeek = selectedDate
                             onDaySelected(selectedDayOfWeek)
                         },
                         2023,
@@ -366,7 +367,8 @@ fun SeanceInformationSection(
     levelList: List<String>,
     selectedClassType: MutableState<String>,
     selectedLevel: MutableState<String>,
-    selectedClassroom: MutableState<String>
+    selectedClassroom: MutableState<String>,
+    group :MutableState<String>
 ) {
     // Dialog state variables
     val dialogClassTypeOpen = remember { mutableStateOf(false) }
@@ -388,6 +390,13 @@ fun SeanceInformationSection(
         ) {
             Text(text = "Level: ${selectedLevel.value}")
         }
+
+        OutlinedTextField(
+            value = group.value,
+            onValueChange = { group.value = it },
+            label = { Text(text = "Group") }, //todo
+            modifier = Modifier.fillMaxWidth()
+        )
 
         OutlinedTextField(
             value = selectedClassroom.value,

@@ -11,7 +11,7 @@ open class Person(
     var adress: String,
     var subscriptionYear: String,
 
-    // account information
-    var email :String,
-    var password : String
+    var email: String,
+    var password: String,
+    var phone: String
 )
